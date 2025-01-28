@@ -9,8 +9,8 @@ def dfs(node, graph, visited, component):
 			
 def find_disconnected_subgraphs(graph):
     # Nodos ya visitados
-	visited = set()  
-	# Lista para guardar los subgrafos aislados
+    visited = set()  
+    # Lista para guardar los subgrafos aislados
     subgraphs = []   
     
     for node in graph:
