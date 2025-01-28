@@ -77,7 +77,7 @@ def create_list_subsolutions(P, D, S):
             shared.remove(i)
             # Si shared esta vacia, significa que podemos partir la solucion en este punto
             # Lo que sigue en la solucion seria parte de otro subgrafo, ya que no hay items compartidos
-            if shared is empty and next(S): # next(S) es para verificar que todavia no terminamos de recorrer la solucion
+            if shared is empty and next(S): # next(S) es para verificar que todavia no terminamos de recorrer la solucion (quizas esto no sea necesario)
                 solutions.append(current_solution) # Lista de listas
                 current_solution = []
     
