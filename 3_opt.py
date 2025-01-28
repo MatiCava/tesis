@@ -63,9 +63,8 @@ def find_disconnected_subgraphs(graph):
 # D lista nodos de delivery
 # S solucion
 def create_list_subsolutions(P, D, S):
-
-	# Lista de elementos que estan actualmente en el auto
-	shared = []
+    # Lista de elementos que estan actualmente en el auto
+    shared = []
     # Solucion actual
     current_solution = []
     # Lista de listas, donde cada una representa un subgrafo aislado de la solucion
