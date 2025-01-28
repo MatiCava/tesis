@@ -1,26 +1,7 @@
-def dfs(node, graph, visited, component):
-    # Marca el nodo como visitado
-    visited.add(node)
-    component.append(node)
-    
-    for neighbor in graph[node]:
-        if neighbor not in visited:
-            dfs(neighbor, graph, visited, component)
-			
-def find_disconnected_subgraphs(graph):
-    # Nodos ya visitados
-    visited = set()  
-    # Lista para guardar los subgrafos aislados
-    subgraphs = []   
-    
-    for node in graph:
-        if node not in visited:
-            component = []  # Lista para almacenar el subgrafo actual
-            dfs(node, graph, visited, component)
-            subgraphs.append(component)
-    
-    return subgraphs
+# Solucion principal
+# Creando el grafo que representa los items que viajan juntos en algun momento
 
+# O(n^2) donde n es el largo de la solucion (2 * cantidad de items)
 # P lista nodos de pickups
 # D lista nodos de delivery
 # S solucion
@@ -47,3 +28,58 @@ def create_cotravel_graph(P, D, S):
 			shared.remove(pairs[i])
 			
 	return cotravel_graph
+
+def dfs(node, graph, visited, component):
+    # Marca el nodo como visitado
+    visited.add(node)
+    component.append(node)
+    
+    for neighbor in graph[node]:
+        if neighbor not in visited:
+            dfs(neighbor, graph, visited, component)
+			
+def find_disconnected_subgraphs(graph):
+    # Nodos ya visitados
+    visited = set()  
+    # Lista para guardar los subgrafos aislados
+    subgraphs = []   
+    
+    for node in graph:
+        if node not in visited:
+            component = []  # Lista para almacenar el subgrafo actual
+            dfs(node, graph, visited, component)
+            subgraphs.append(component)
+    
+    return subgraphs
+	
+# ---------------------------------------------------------------------------------------------- #
+
+# Solucion alternativa sin crear el grafo, reduciendo el costo
+
+# La intencion de esta funcion es partir la solucion en distintas listas, que en el fondo representan la misma idea de encontrar subgrafos aislados.
+# O(n) donde n es el largo de la solucion (2 * cantidad de items)
+
+# P lista nodos de pickups
+# D lista nodos de delivery
+# S solucion
+def create_list_subsolutions(P, D, S):
+
+	# Lista de elementos que estan actualmente en el auto
+	shared = []
+    # Solucion actual
+    current_solution = []
+    # Lista de listas, donde cada una representa un subgrafo aislado de la solucion
+    solutions = []
+
+    for i in S:
+        if i in P:
+            shared.append(i)
+        if i in D:
+            shared.remove(i)
+            # Si shared esta vacia, significa que podemos partir la solucion en este punto
+            # Lo que sigue en la solucion seria parte de otro subgrafo, ya que no hay items compartidos
+            if shared is empty and next(S): # next(S) es para verificar que todavia no terminamos de recorrer la solucion
+                solutions.append(current_solution) # Lista de listas
+                current_solution = []
+    
+    return solutions
