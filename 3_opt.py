@@ -62,7 +62,7 @@ def find_disconnected_subgraphs(graph):
 # P lista nodos de pickups
 # D lista nodos de delivery
 # S solucion
-def create_list_subsolutions(P, D, S):
+def create_list_subsolutions(P, D, S, Or, Dest):
     # Lista de elementos que estan actualmente en el auto
     shared = []
     # Solucion actual
@@ -77,7 +77,7 @@ def create_list_subsolutions(P, D, S):
             shared.remove(i)
             # Si shared esta vacia, significa que podemos partir la solucion en este punto
             # Lo que sigue en la solucion seria parte de otro subgrafo, ya que no hay items compartidos
-            if shared is empty and next(S): # next(S) es para verificar que todavia no terminamos de recorrer la solucion (quizas esto no sea necesario)
+            if shared is [] and S[i + 1] != Dest:
                 solutions.append(current_solution) # Lista de listas
                 current_solution = []
     
