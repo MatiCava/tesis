@@ -77,7 +77,7 @@ def create_list_subsolutions(P, D, S, Or, Dest):
             shared.remove(i)
             # Si shared esta vacia, significa que podemos partir la solucion en este punto
             # Lo que sigue en la solucion seria parte de otro subgrafo, ya que no hay items compartidos
-            if shared is [] and S[i + 1] != Dest:
+            if not shared and S[i + 1] != Dest:
                 solutions.append(current_solution) # Lista de listas
                 current_solution = []
     
@@ -97,7 +97,7 @@ def generate_3opt_variation(S, change_1, change_2, change_3):
     part_5 = S[id_3[1]:]  # Desde el final de change_3 hasta el final de S
 
     # Reorganizar en la nueva permutacion
-    return part_1 + part_2 + part_3 + part_4 + part_5
+    return part_1 + part_4 + part_3 + part_2 + part_5
 
 
 def opt_3(P, D, S, Or, Dest, G, break_percentage):
