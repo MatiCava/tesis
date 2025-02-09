@@ -28,14 +28,30 @@ for n in n_values:
             pickup = points[i]
             delivery = points[n + i]
             requests.append((pickup, delivery))
+
+            if i == 1:
+                # Calcular la distancia euclidiana desde depósito a primer pickup
+                initial_cost = euclidean_distance(depot, pickup)
+                travel_costs[f'depot-1'] = initial_cost
             
             # Calcular la distancia euclidiana para cada solicitud
             cost = euclidean_distance(pickup, delivery)
             travel_costs[f'{i}-{n+i}'] = cost
         
+        while True:
+            final_destination = (random.randint(0, 1000), random.randint(0, 1000))
+            if final_destination not in points:
+                break
+
+        # Calcular la distancia euclidiana desde último delivery al destino final
+        last_delivery = requests[-1][1]
+        final_cost = euclidean_distance(last_delivery, final_destination)
+        travel_costs['last_delivery-final'] = final_cost
+
         # Guardar la instancia en un archivo JSON
         instance_data = {
             'depot': depot,
+            'final_destination': final_destination,
             'requests': requests,
             'travel_costs': travel_costs
         }
