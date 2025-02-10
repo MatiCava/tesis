@@ -1,6 +1,7 @@
 import random
 import math
 import json
+import os
 
 # Función para calcular la distancia euclidiana
 def euclidean_distance(p1, p2):
@@ -12,8 +13,17 @@ n_values = [5, 10, 15, 20, 25, 30, 35]
 # Letras para identificar instancias
 instance_labels = ['a', 'b', 'c', 'd', 'e']
 
+# Ruta donde guardar las instancias
+base_dir = "Instances"
+os.makedirs(base_dir, exist_ok=True)
+
 # Generar las instancias
 for n in n_values:
+
+    # Carpeta correspondiente a las instancias
+    n_dir = os.path.join(base_dir, str(n))  # Carpeta específica para cada n
+    os.makedirs(n_dir, exist_ok=True)
+    
     for label in instance_labels:
         points = [(random.randint(0, 1000), random.randint(0, 1000)) for _ in range(2 * n + 1)]
         
@@ -22,31 +32,31 @@ for n in n_values:
         
         # Crear pares de solicitudes y calcular sus costos directamente
         requests = []
-        travel_costs = {}
 
-        for i in range(1, n + 1):
-            pickup = points[i]
-            delivery = points[n + i]
-            requests.append((pickup, delivery))
+        pickups = points[1:n+1]
+        deliveries = points[n+1:(n*2)+1]
+        requests = list(zip(pickups, deliveries))
 
-            if i == 1:
-                # Calcular la distancia euclidiana desde depósito a primer pickup
-                initial_cost = euclidean_distance(depot, pickup)
-                travel_costs[f'depot-1'] = initial_cost
-            
-            # Calcular la distancia euclidiana para cada solicitud
-            cost = euclidean_distance(pickup, delivery)
-            travel_costs[f'{i}-{n+i}'] = cost
-        
-        while True:
+        # Generar un destino final aleatorio que no esté en los puntos ya creados
+        final_destination = (random.randint(0, 1000), random.randint(0, 1000))
+        while final_destination in points:
             final_destination = (random.randint(0, 1000), random.randint(0, 1000))
-            if final_destination not in points:
-                break
 
-        # Calcular la distancia euclidiana desde último delivery al destino final
-        last_delivery = requests[-1][1]
-        final_cost = euclidean_distance(last_delivery, final_destination)
-        travel_costs['last_delivery-final'] = final_cost
+        # Crear lista completa de nodos
+        all_nodes = [depot] + pickups + deliveries + [final_destination]
+
+        # Numero total de nodos (deposito + pickups + deliveries + destino final)
+        num_nodes = len(all_nodes)
+
+        # Inicializar la matriz con ceros
+        travel_costs = [[0] * num_nodes for _ in range(num_nodes)]
+
+        # Rellenar la matriz con las distancias euclidianas
+        for i in range(num_nodes):
+            for j in range(num_nodes):
+                if i != j:
+                    travel_costs[i][j] = euclidean_distance(all_nodes[i], all_nodes[j])
+
 
         # Guardar la instancia en un archivo JSON
         instance_data = {
@@ -56,7 +66,9 @@ for n in n_values:
             'travel_costs': travel_costs
         }
 
-        file_name = f'prob{n}{label}.json'
+
+        # Guardar las instancias
+        file_name = os.path.join(n_dir, f'prob{n}{label}.json')
         with open(file_name, 'w') as f:
             json.dump(instance_data, f, indent=4)
 
