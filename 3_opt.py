@@ -1,3 +1,5 @@
+import json
+
 # Solucion principal
 # Creando el grafo que representa los items que viajan juntos en algun momento
 
@@ -131,3 +133,23 @@ def opt_3(P, D, S, Or, Dest, G, break_percentage):
             current_percentage = (100 * difference) / original_cost
             
     return new_cost, S
+
+def generate_initial_solution(input):
+    S = []
+    for i in range(0, len(input["requests"])):
+        entry = input["requests"][i]
+        if not S:
+            S.append([i, entry])
+        else:
+            check_add = True
+            for request_added in S:
+                check_add = check_add and input["incompatibilities"][i][request_added[0]] == 0
+            if check_add:
+                S.append([i, entry])
+    return S
+
+def main():
+    route_json = "Instances/5/prob5a/density_0.75.json"
+    with open(route_json, "r") as file:
+        input = json.load(file)
+    initial_S = generate_initial_solution(input)
