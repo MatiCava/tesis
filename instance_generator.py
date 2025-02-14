@@ -87,6 +87,8 @@ for n in n_values:
             instance_data = {
                 'depot': depot,
                 'final_destination': final_destination,
+                'pickup_nodes': pickups,
+                'deliviries_nodes': deliveries,
                 'requests': requests,
                 'travel_costs': travel_costs,
                 'incompatibilities': incompatibility_graph
