@@ -1,62 +1,7 @@
 import json
+from node import Node
 
-# Solucion principal
-# Creando el grafo que representa los items que viajan juntos en algun momento
-
-# O(n^2) donde n es el largo de la solucion (2 * cantidad de items)
-# P lista nodos de pickups
-# D lista nodos de delivery
-# S solucion
-def create_cotravel_graph(P, D, S):
-	# Creamos diccionario para guardar futuros nodos del grafo
-	pairs = {}
-	# Lista de elementos que estan actualmente en el auto
-	shared = []
-	n = len(P)
-	for i in range(0, n):
-		pairs[i] = (P(i),D(i))
-		
-	cotravel_graph = [[0] * n for _ in range(n)]
-			
-	for i in S:
-		# Si i es un pickup lo agregamos a la lista de items que comparten el auto y marcamos en el grafo
-		if i in P:
-			shared.append(pairs[i])
-			for j in shared:
-				cotravel_graph[i][j] = 1
-				cotravel_graph[j][i] = 1
-		# Si i es un devlivery lo sacamos de la lista de items que comparten el auto
-		if i in D:
-			shared.remove(pairs[i])
-			
-	return cotravel_graph
-
-def dfs(node, graph, visited, component):
-    # Marca el nodo como visitado
-    visited.add(node)
-    component.append(node)
-    
-    for neighbor in graph[node]:
-        if neighbor not in visited:
-            dfs(neighbor, graph, visited, component)
-			
-def find_disconnected_subgraphs(graph):
-    # Nodos ya visitados
-    visited = set()  
-    # Lista para guardar los subgrafos aislados
-    subgraphs = []   
-    
-    for node in graph:
-        if node not in visited:
-            component = []  # Lista para almacenar el subgrafo actual
-            dfs(node, graph, visited, component)
-            subgraphs.append(component)
-    
-    return subgraphs
-	
-# ---------------------------------------------------------------------------------------------- #
-
-# Solucion alternativa sin crear el grafo, reduciendo el costo
+# Solucion sin crear el grafo, reduciendo el costo
 
 # La intencion de esta funcion es partir la solucion en distintas listas, que en el fondo representan la misma idea de encontrar subgrafos aislados.
 # O(n) donde n es el largo de la solucion (2 * cantidad de items)
@@ -103,12 +48,15 @@ def generate_3opt_variation(S, change_1, change_2, change_3):
     # Reorganizar en la nueva permutacion
     return part_1 + part_4 + part_3 + part_2 + part_5
 
-def calculate_cost(S, input):
-     return 100
+def calculate_cost(S, travel_costs):
+    total = 0
+    for i, node in enumerate(S[:-1]): # Evitamos visitar el nodo final
+        total += travel_costs[node.id][S[i+1].id]
+    return total
 
-def opt_3(P, D, S, Or, Dest, input, break_percentage, incompatibilities):
+def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities):
     # Inicilizamos el costo original de la solucion con la que arrancamos
-    original_cost = calculate_cost(S, input)
+    original_cost = calculate_cost(S, travel_costs)
     # Inicializamos la diferencia con la que vamos a ir checkeando hasta alcanzar el porcentaje de mejora buscado
     difference = original_cost - original_cost
     current_percentage = (100 * difference) / original_cost
@@ -140,30 +88,34 @@ def opt_3(P, D, S, Or, Dest, input, break_percentage, incompatibilities):
     # return new_cost, S
 
 def generate_initial_solution(input):
-    S = []
-    # for i in range(0, len(input["requests"])):
-    #     entry = input["requests"][i]
-    #     if not S:
-    #         S.append([i, entry])
-    #     else:
-    #         check_add = True
-    #         for request_added in S:
-    #             check_add = check_add and input["incompatibilities"][i][request_added[0]] == 0
-    #         if check_add:
-    #             S.append([i, entry])
-    for i in range(0, len(input["requests"])):
-        entry = input["requests"][i]
-        S.append(entry[0])
-        S.append(entry[1])
+    depot = input["depot"]
+    pickup_nodes = input["pickup_nodes"]
+    delivery_nodes = input["delivery_nodes"]
+    final_node = input["final_destination"]
+
+    S = [Node(id = depot["id"], x = depot["x"], y = depot["y"], node_type = depot["node_type"])]
+    
+    for i in range(0, len(pickup_nodes)):
+        # pickup y delivery nodes son simetricas
+        p = pickup_nodes[i]
+        d = delivery_nodes[i]
+
+        node_p = Node(id = p["id"], x = p["x"], y = p["y"], node_type = p["node_type"])
+        node_d = Node(id = d["id"], x = d["x"], y = d["y"], node_type = d["node_type"])
+
+        S.append(node_p)
+        S.append(node_d)
+
+    S.append(Node(id = final_node["id"], x = final_node["x"], y = final_node["y"], node_type = final_node["node_type"]))
+
     return S
+
 
 def main():
     route_json = "Instances/5/prob5a/density_0.5.json"
     with open(route_json, "r") as file:
         input = json.load(file)
     initial_S = generate_initial_solution(input)
-    #initial_S = input["requests"]
-    print("initial_S ", initial_S)
-    opt_3(input["pickup_nodes"], input["deliviries_nodes"], initial_S, input["depot"], input["final_destination"], input, 5, input["incompatibilities"])
+    opt_3(input["pickup_nodes], input["delivery_nodes], initial_S, input["depot"], input["final_destination"], input["travel_costs"], 5, input["incompatibilities"])
 
 main()

@@ -5,7 +5,7 @@ import os
 
 # Función para calcular la distancia euclidiana
 def euclidean_distance(p1, p2):
-    return math.hypot(p1[0] - p2[0], p1[1] - p2[1])
+    return math.hypot(p1["x"] - p2["x"], p1["y"] - p2["y"])
 
 # Valores de n
 n_values = [5, 10, 15, 20, 25, 30, 35]
@@ -34,20 +34,19 @@ for n in n_values:
         
         points = [(random.randint(0, 1000), random.randint(0, 1000)) for _ in range(2 * n + 1)]
         
-        # El primer punto es el depósito
-        depot = points[0]
-        
-        # Crear pares de solicitudes y calcular sus costos directamente
-        requests = []
-
-        pickups = points[1:n+1]
-        deliveries = points[n+1:(n*2)+1]
-        requests = list(zip(pickups, deliveries))
-
         # Generar un destino final aleatorio que no esté en los puntos ya creados
-        final_destination = (random.randint(0, 1000), random.randint(0, 1000))
-        while final_destination in points:
-            final_destination = (random.randint(0, 1000), random.randint(0, 1000))
+        final_destination_coord = (random.randint(0, 1000), random.randint(0, 1000))
+        while final_destination_coord in points:
+            final_destination_coord = (random.randint(0, 1000), random.randint(0, 1000))
+
+        # Creamos el nodo final
+        final_destination = {"x": final_destination_coord[0], "y": final_destination_coord[1], "node_type": "final", "id": n + 1}
+
+        # El primer punto es el depósito
+        depot = {"x": points[0][0], "y": points[0][1], "node_type": "depot", "id": 0}
+        
+        pickups = [{"x": points[i][0], "y": points[i][1], "node_type": "pickup", "id": i} for i in range(1, n+1)]
+        deliveries = [{"x": points[i][0], "y": points[i][1], "node_type": "delivery", "id": i - n} for i in range(n+1, 2*n+1)]
 
         # Crear lista completa de nodos
         all_nodes = [depot] + pickups + deliveries + [final_destination]
@@ -88,8 +87,7 @@ for n in n_values:
                 'depot': depot,
                 'final_destination': final_destination,
                 'pickup_nodes': pickups,
-                'deliviries_nodes': deliveries,
-                'requests': requests,
+                'delivery_nodes': deliveries,
                 'travel_costs': travel_costs,
                 'incompatibilities': incompatibility_graph
             }
