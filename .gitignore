@@ -1,0 +1,46 @@
+# Ignorar la carpeta .vscode
+.vscode/
+
+# Ignorar la carpeta .pytest_cache
+.pytest_cache/
+
+# Ignorar archivos y carpetas comunes de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignorar entornos virtuales
+venv/
+env/
+.venv/
+ENV/
+
+# Ignorar archivos de configuración de entornos virtuales
+.env
+.venv
+
+# Ignorar archivos de configuración de Python
+*.egg-info/
+*.egg
+dist/
+build/
+pip-wheel-metadata/
+
+# Ignorar archivos de configuración de Jupyter Notebook
+.ipynb_checkpoints/
+
+# Ignorar archivos de configuración de IDE
+.idea/
+.DS_Store
+
+# Ignorar archivos de logs y bases de datos
+*.log
+*.sqlite3
+
+# Ignorar archivos de coverage
+.coverage
+htmlcov/
+
+# Ignorar archivos de configuración de pytest
+.pytest_cache/
+.coverage.*
