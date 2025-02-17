@@ -1,5 +1,5 @@
-import json
 from node import Node
+from utils import calculate_cost
 
 # Solucion sin crear el grafo, reduciendo el costo
 
@@ -58,12 +58,6 @@ def generate_3opt_variation(S, change_1, change_2, change_3):
     # Reorganizar en la nueva permutacion
     return part_1 + part_4 + part_3 + part_2 + part_5
 
-def calculate_cost(S, travel_costs):
-    total = 0
-    for i, node in enumerate(S[:-1]): # Evitamos visitar el nodo final
-        total += travel_costs[node.id][S[i+1].id]
-    return total
-
 def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities):
     # Inicilizamos el costo original de la solucion con la que arrancamos
     original_cost = calculate_cost(S, travel_costs)
@@ -105,40 +99,3 @@ def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities):
     print("res_solution ", S)
     print("res_cost ", new_cost)
     return new_cost, S
-
-def generate_initial_solution(input):
-    depot = input["depot"]
-    pickup_nodes = input["pickup_nodes"]
-    delivery_nodes = input["delivery_nodes"]
-    final_node = input["final_destination"]
-
-    S = [Node(id = depot["id"], x = depot["x"], y = depot["y"], node_type = depot["node_type"])]
-    P = []
-    D = []
-
-    for i in range(0, len(pickup_nodes)):
-        # pickup y delivery nodes son simetricas
-        p = pickup_nodes[i]
-        d = delivery_nodes[i]
-
-        node_p = Node(id = p["id"], x = p["x"], y = p["y"], node_type = p["node_type"])
-        node_d = Node(id = d["id"], x = d["x"], y = d["y"], node_type = d["node_type"])
-
-        S.append(node_p)
-        S.append(node_d)
-        P.append(node_p)
-        D.append(node_d)
-
-    S.append(Node(id = final_node["id"], x = final_node["x"], y = final_node["y"], node_type = final_node["node_type"]))
-
-    return S, P, D
-
-
-def main():
-    route_json = "Instances/5/prob5a/density_0.5.json"
-    with open(route_json, "r") as file:
-        input = json.load(file)
-    initial_S, P, D = generate_initial_solution(input)
-    opt_3(P, D, initial_S, input["depot"], input["final_destination"], input["travel_costs"], 15, input["incompatibilities"])
-
-main()
