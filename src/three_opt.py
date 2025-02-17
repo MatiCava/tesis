@@ -1,5 +1,6 @@
 from node import Node
 from utils import calculate_cost
+from itertools import combinations, permutations
 
 # Solucion sin crear el grafo, reduciendo el costo
 
@@ -58,15 +59,36 @@ def generate_3opt_variation(S, change_1, change_2, change_3):
     # Reorganizar en la nueva permutacion
     return part_1 + part_4 + part_3 + part_2 + part_5
 
+def three_opt_permutations(lst):
+    n = len(lst)
+    # Generar todas las combinaciones de 3 índices en orden ascendente
+    for i, j, k in combinations(range(n), 3):
+        # Guardar los valores originales en las posiciones i, j, k
+        original = (lst[i], lst[j], lst[k])
+        # Convertir los elementos de original a tuplas
+        original_tuples = tuple(map(tuple, original))
+        # Generar permutaciones únicas de los 3 elementos seleccionados
+        unique_perms = set(permutations(original_tuples))  # Usar un set para evitar duplicados en las permutaciones
+        for perm in unique_perms:
+            # Aplicar la permutación actual
+            lst[i], lst[j], lst[k] = perm
+            # Devolver la lista modificada (sin copiar)
+            yield tuple(map(tuple, lst))  # Convertir la lista en tupla de tuplas
+        # Restaurar los valores originales en las posiciones i, j, k
+        lst[i], lst[j], lst[k] = original
+
 def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities):
     # Inicilizamos el costo original de la solucion con la que arrancamos
     original_cost = calculate_cost(S, travel_costs)
-    print("original_cost ", original_cost)
+    print("original_cost", original_cost)
     # Inicializamos la diferencia con la que vamos a ir checkeando hasta alcanzar el porcentaje de mejora buscado
     difference = original_cost - original_cost
     current_percentage = (100 * difference) / original_cost
     # Buscamos los posibles cambios dentro de la solucion con la que arrancamos
     possible_changes = create_list_subsolutions(P, D, S, Or, Dest)
+
+    # res = three_opt_permutations(possible_changes)
+
     print("P ", P)
     print("D ", D)
     print("initial_solution ", S)
