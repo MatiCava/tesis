@@ -61,21 +61,32 @@ def generate_3opt_variation(S, change_1, change_2, change_3):
 
 def three_opt_permutations(lst):
     n = len(lst)
-    # Generar todas las combinaciones de 3 índices en orden ascendente
+    results = set()
+    
     for i, j, k in combinations(range(n), 3):
-        # Guardar los valores originales en las posiciones i, j, k
+        
         original = (lst[i], lst[j], lst[k])
-        # Convertir los elementos de original a tuplas
         original_tuples = tuple(map(tuple, original))
-        # Generar permutaciones únicas de los 3 elementos seleccionados
-        unique_perms = set(permutations(original_tuples))  # Usar un set para evitar duplicados en las permutaciones
-        for perm in unique_perms:
-            # Aplicar la permutación actual
-            lst[i], lst[j], lst[k] = perm
-            # Devolver la lista modificada (sin copiar)
-            yield tuple(map(tuple, lst))  # Convertir la lista en tupla de tuplas
-        # Restaurar los valores originales en las posiciones i, j, k
-        lst[i], lst[j], lst[k] = original
+        print("original_tuples", original_tuples)
+        if len(set(original_tuples)) > 1:  # Solo permutar si hay diferencias
+            unique_perms = set(permutations(original_tuples))
+            
+            for perm in unique_perms:
+                lst[i], lst[j], lst[k] = perm
+                snapshot = tuple(tuple(x) for x in lst)
+                results.add(snapshot)
+                
+            lst[i], lst[j], lst[k] = original
+    
+    for res in results:
+        for tup in res:
+            print("id ", tup[0].id)
+            print("type ", tup[0].node_type)
+            print("id ", tup[1].id)
+            print("type ", tup[1].node_type)
+        print("-------------")
+        
+    return results
 
 def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities):
     # Inicilizamos el costo original de la solucion con la que arrancamos
@@ -87,37 +98,37 @@ def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities):
     # Buscamos los posibles cambios dentro de la solucion con la que arrancamos
     possible_changes = create_list_subsolutions(P, D, S, Or, Dest)
 
-    # res = three_opt_permutations(possible_changes)
+    res = three_opt_permutations(possible_changes)
+    return res
+    # print("P ", P)
+    # print("D ", D)
+    # print("initial_solution ", S)
+    # print("possible_changes ", possible_changes)
+    # n = len(possible_changes)
+    # while current_percentage < break_percentage:
+    #     for i in range(0, n):
+    #         change = possible_changes[i]
+    #         print("i actual ", i)
+    #         print("change ", change)
+    #         # Si existen dos posibles cambios hacia delante de donde nos encontramos realizamos una permutacion con ellos
+    #         # En caso de no encontrar uno o ambos trabajamos con los primeros cambios posibles
+    #         if i + 1 < n:
+    #             if i + 2 < n:
+    #                 new_solution = generate_3opt_variation(S, change, possible_changes[i + 1], possible_changes[i + 2])
+    #             else:
+    #                 new_solution = generate_3opt_variation(S, change, possible_changes[i + 1], possible_changes[i - 1])
+    #         else:
+    #             new_solution = generate_3opt_variation(S, change, possible_changes[i - 1], possible_changes[i - 2])
 
-    print("P ", P)
-    print("D ", D)
-    print("initial_solution ", S)
-    print("possible_changes ", possible_changes)
-    n = len(possible_changes)
-    while current_percentage < break_percentage:
-        for i in range(0, n):
-            change = possible_changes[i]
-            print("i actual ", i)
-            print("change ", change)
-            # Si existen dos posibles cambios hacia delante de donde nos encontramos realizamos una permutacion con ellos
-            # En caso de no encontrar uno o ambos trabajamos con los primeros cambios posibles
-            if i + 1 < n:
-                if i + 2 < n:
-                    new_solution = generate_3opt_variation(S, change, possible_changes[i + 1], possible_changes[i + 2])
-                else:
-                    new_solution = generate_3opt_variation(S, change, possible_changes[i + 1], possible_changes[i - 1])
-            else:
-                new_solution = generate_3opt_variation(S, change, possible_changes[i - 1], possible_changes[i - 2])
-
-            print("new_solution ", new_solution)
-            # Calculamos nuevo costo utilizando la nueva solucion
-            new_cost = calculate_cost(new_solution, travel_costs)
-            S = new_solution
-            # Calculamos nueva diferencia entre la solucion original con la que arrancamos y la actual
-            difference = original_cost - new_cost
-            # Calculamos nuevo porcentaje de mejora
-            current_percentage = (100 * difference) / original_cost
+    #         print("new_solution ", new_solution)
+    #         # Calculamos nuevo costo utilizando la nueva solucion
+    #         new_cost = calculate_cost(new_solution, travel_costs)
+    #         S = new_solution
+    #         # Calculamos nueva diferencia entre la solucion original con la que arrancamos y la actual
+    #         difference = original_cost - new_cost
+    #         # Calculamos nuevo porcentaje de mejora
+    #         current_percentage = (100 * difference) / original_cost
             
-    print("res_solution ", S)
-    print("res_cost ", new_cost)
-    return new_cost, S
+    # print("res_solution ", S)
+    # print("res_cost ", new_cost)
+    # return new_cost, S
