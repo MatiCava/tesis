@@ -76,29 +76,20 @@ def three_opt_permutations(lst):
                 results.add(snapshot)
                 
             lst[i], lst[j], lst[k] = original
-    #return list(results)
+
     for res in results:
-        print("res ", res)
         perm_list = []
         for tup in res:
             perm_list.append(tup[0])
             perm_list.append(tup[1])
         results_list.append(perm_list)
-        #for tup in res:
-            # print("id ", tup[0].id)
-            # print("type ", tup[0].node_type)
-            # print("id ", tup[1].id)
-            # print("type ", tup[1].node_type)
-        print("-------------")
-        
+    
     return results_list
 
 def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities, max_intentos):
     
     # Inicilizamos el costo original de la solucion con la que arrancamos
-    print("original S ", S)
     original_cost = calculate_cost(S, travel_costs)
-    print("original_cost", original_cost)
     # Inicializamos la diferencia con la que vamos a ir checkeando hasta alcanzar el porcentaje de mejora buscado
     difference = original_cost - original_cost
     current_percentage = (100 * difference) / original_cost
@@ -106,45 +97,11 @@ def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities, 
     possible_changes = create_list_subsolutions(P, D, S, Or, Dest)
 
     all_permutations = three_opt_permutations(possible_changes)
-    print("all_permutations ", all_permutations)
     while current_percentage < break_percentage and max_intentos > 0:
         for perm in all_permutations:
             new_cost = calculate_cost(perm, travel_costs)
-            print("new_cost ", new_cost)
             S = perm
             difference = original_cost - new_cost
             current_percentage = (100 * difference) / original_cost
             max_intentos -= 1
     return new_cost, S
-    # print("P ", P)
-    # print("D ", D)
-    # print("initial_solution ", S)
-    # print("possible_changes ", possible_changes)
-    # n = len(possible_changes)
-    # while current_percentage < break_percentage:
-    #     for i in range(0, n):
-    #         change = possible_changes[i]
-    #         print("i actual ", i)
-    #         print("change ", change)
-    #         # Si existen dos posibles cambios hacia delante de donde nos encontramos realizamos una permutacion con ellos
-    #         # En caso de no encontrar uno o ambos trabajamos con los primeros cambios posibles
-    #         if i + 1 < n:
-    #             if i + 2 < n:
-    #                 new_solution = generate_3opt_variation(S, change, possible_changes[i + 1], possible_changes[i + 2])
-    #             else:
-    #                 new_solution = generate_3opt_variation(S, change, possible_changes[i + 1], possible_changes[i - 1])
-    #         else:
-    #             new_solution = generate_3opt_variation(S, change, possible_changes[i - 1], possible_changes[i - 2])
-
-    #         print("new_solution ", new_solution)
-    #         # Calculamos nuevo costo utilizando la nueva solucion
-    #         new_cost = calculate_cost(new_solution, travel_costs)
-    #         S = new_solution
-    #         # Calculamos nueva diferencia entre la solucion original con la que arrancamos y la actual
-    #         difference = original_cost - new_cost
-    #         # Calculamos nuevo porcentaje de mejora
-    #         current_percentage = (100 * difference) / original_cost
-            
-    # print("res_solution ", S)
-    # print("res_cost ", new_cost)
-    # return new_cost, S
