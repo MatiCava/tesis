@@ -29,7 +29,7 @@ def create_list_subsolutions(P, D, S, Or, Dest):
             # Lo que sigue en la solucion seria parte de otro subgrafo, ya que no hay items compartidos
             if not shared:
                 current_solution.append(node)
-                solutions.append(current_solution) # Lista de listas
+                solutions.append([S[0]] + current_solution + [S[-1]]) # Lista de listas
                 current_solution = []
     return solutions
 
