@@ -62,34 +62,41 @@ def generate_3opt_variation(S, change_1, change_2, change_3):
 def three_opt_permutations(lst):
     n = len(lst)
     results = set()
+    results_list = []
     
     for i, j, k in combinations(range(n), 3):
         
         original = (lst[i], lst[j], lst[k])
         original_tuples = tuple(map(tuple, original))
-        print("original_tuples", original_tuples)
         if len(set(original_tuples)) > 1:  # Solo permutar si hay diferencias
             unique_perms = set(permutations(original_tuples))
-            
             for perm in unique_perms:
                 lst[i], lst[j], lst[k] = perm
                 snapshot = tuple(tuple(x) for x in lst)
                 results.add(snapshot)
                 
             lst[i], lst[j], lst[k] = original
-    
+    #return list(results)
     for res in results:
+        print("res ", res)
+        perm_list = []
         for tup in res:
-            print("id ", tup[0].id)
-            print("type ", tup[0].node_type)
-            print("id ", tup[1].id)
-            print("type ", tup[1].node_type)
+            perm_list.append(tup[0])
+            perm_list.append(tup[1])
+        results_list.append(perm_list)
+        #for tup in res:
+            # print("id ", tup[0].id)
+            # print("type ", tup[0].node_type)
+            # print("id ", tup[1].id)
+            # print("type ", tup[1].node_type)
         print("-------------")
         
-    return results
+    return results_list
 
-def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities):
+def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities, max_intentos):
+    
     # Inicilizamos el costo original de la solucion con la que arrancamos
+    print("original S ", S)
     original_cost = calculate_cost(S, travel_costs)
     print("original_cost", original_cost)
     # Inicializamos la diferencia con la que vamos a ir checkeando hasta alcanzar el porcentaje de mejora buscado
@@ -98,8 +105,17 @@ def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities):
     # Buscamos los posibles cambios dentro de la solucion con la que arrancamos
     possible_changes = create_list_subsolutions(P, D, S, Or, Dest)
 
-    res = three_opt_permutations(possible_changes)
-    return res
+    all_permutations = three_opt_permutations(possible_changes)
+    print("all_permutations ", all_permutations)
+    while current_percentage < break_percentage and max_intentos > 0:
+        for perm in all_permutations:
+            new_cost = calculate_cost(perm, travel_costs)
+            print("new_cost ", new_cost)
+            S = perm
+            difference = original_cost - new_cost
+            current_percentage = (100 * difference) / original_cost
+            max_intentos -= 1
+    return new_cost, S
     # print("P ", P)
     # print("D ", D)
     # print("initial_solution ", S)
