@@ -12,7 +12,8 @@ def main():
     initial_S, P, D = generate_initial_solution(input)
     len_nodes = len(P) + 2
     max_intentos = math.ceil(break_percentage * (len_nodes * len_nodes) / 100)
-    _, res = opt_3(P, D, initial_S, input["depot"], input["final_destination"], input["travel_costs"], break_percentage, input["incompatibilities"], max_intentos)
-    print(res)
+    cost, sol = opt_3(P, D, initial_S, input["depot"], input["final_destination"], input["travel_costs"], break_percentage, input["incompatibilities"], max_intentos)
+    print("Costo: ", cost)
+    print("Sol: ", sol)
 
 main()

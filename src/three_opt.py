@@ -1,3 +1,4 @@
+import itertools
 from node import Node
 from utils import calculate_cost
 from itertools import combinations, permutations
@@ -29,43 +30,47 @@ def create_list_subsolutions(P, D, S, Or, Dest):
             # Lo que sigue en la solucion seria parte de otro subgrafo, ya que no hay items compartidos
             if not shared:
                 current_solution.append(node)
-                solutions.append([S[0]] + current_solution + [S[-1]]) # Lista de listas
+                solutions.append(current_solution) # Lista de listas
                 current_solution = []
-    return solutions
+    return [[S[0]]] + solutions + [[S[-1]]]
 
-def generate_3opt_variation(S, change_1, change_2, change_3):
-    print("current_S ", S)
-    print("change_1 ", change_1)
-    print("change_1[0] ", change_1[0])
-    print("change_1[-1] ", change_1[-1])
-    print("change_2 ", change_2)
-    print("change_2[0] ", change_2[0])
-    print("change_2[-1] ", change_2[-1])
-    print("change_3 ", change_3) 
-    print("change_3[0] ", change_3[0])
-    print("change_3[-1] ", change_3[-1])
-    # Convertir los segmentos en indices para extraer los valores de S
-    id_1 = S.index(change_1[0]), S.index(change_1[-1]) + 1
-    id_2 = S.index(change_2[0]), S.index(change_2[-1]) + 1
-    id_3 = S.index(change_3[0]), S.index(change_3[-1]) + 1
+def three_opt_permutations_2(lst, original_cost, travel_costs):
+    size = len(lst)
+    
+    # Hacemos este rango para evitar mover el origen y el final
+    for i, j, k in combinations(range(1, size - 1), 3):
+        original = (lst[i], lst[j], lst[k])
 
-    # Extraer segmentos segun los indices encontrados
-    part_1 = S[:id_1[0]]  # Desde el inicio hasta antes de change_1
-    part_2 = S[id_1[0]:id_1[1]]  # change_1
-    part_3 = S[id_2[0]:id_2[1]]  # change_2
-    part_4 = S[id_3[0]:id_3[1]]  # change_3
-    part_5 = S[id_3[1]:]  # Desde el final de change_3 hasta el final de S
+        # Se resta el costo de las aristas que eliminamos
+        current_cost = original_cost - \
+            travel_costs[lst[i-1][-1].id][lst[i][0].id] - travel_costs[lst[i][-1].id][lst[i+1][0].id] - \
+            travel_costs[lst[j-1][-1].id][lst[j][0].id] - travel_costs[lst[j][-1].id][lst[j+1][0].id] - \
+            travel_costs[lst[k-1][-1].id][lst[k][0].id] - travel_costs[lst[k][-1].id][lst[k+1][0].id]
 
-    # Reorganizar en la nueva permutacion
-    return part_1 + part_4 + part_3 + part_2 + part_5
+        for l, m, n in set(permutations([i, j, k])):
+            val_l, val_m, val_n = lst[l], lst[m], lst[n]
+            lst[l], lst[m], lst[n] = original
+            lst[i], lst[j], lst[k] = val_l, val_m, val_n
+            
+            # Se suma el costo de las nuevas aristas
+            new_cost = current_cost + \
+                travel_costs[lst[l-1][-1].id][lst[l][0].id] + travel_costs[lst[l][-1].id][lst[l+1][0].id] + \
+                travel_costs[lst[m-1][-1].id][lst[m][0].id] + travel_costs[lst[m][-1].id][lst[m+1][0].id] + \
+                travel_costs[lst[n-1][-1].id][lst[n][0].id] + travel_costs[lst[n][-1].id][lst[n+1][0].id]
+
+            yield new_cost, lst
+
+            lst[i], lst[j], lst[k] = original
+            lst[l], lst[m], lst[n] = val_l, val_m, val_n
+
 
 def three_opt_permutations(lst):
     n = len(lst)
     results = set()
     results_list = []
     
-    for i, j, k in combinations(range(n), 3):
-        
+    # Hacemos este rango para evitar mover el origen y el final
+    for i, j, k in combinations(range(1, n - 1), 3):
         original = (lst[i], lst[j], lst[k])
         original_tuples = tuple(map(tuple, original))
         if len(set(original_tuples)) > 1:  # Solo permutar si hay diferencias
@@ -95,11 +100,11 @@ def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities, 
     current_percentage = (100 * difference) / original_cost
     # Buscamos los posibles cambios dentro de la solucion con la que arrancamos
     possible_changes = create_list_subsolutions(P, D, S, Or, Dest)
+    new_cost = original_cost
 
-    all_permutations = three_opt_permutations(possible_changes)
-    while current_percentage < break_percentage and max_intentos > 0:
-        for perm in all_permutations:
-            new_cost = calculate_cost(perm, travel_costs)
+    while current_percentage < break_percentage and max_intentos > 10:
+        for perm_cost, perm in three_opt_permutations_2(possible_changes, original_cost, travel_costs):
+            new_cost = perm_cost
             S = perm
             difference = original_cost - new_cost
             current_percentage = (100 * difference) / original_cost
