@@ -40,7 +40,7 @@ def three_opt_permutations_2(lst, original_cost, travel_costs):
     # Hacemos este rango para evitar mover el origen y el final
     for i, j, k in combinations(range(1, size - 1), 3):
         original = (lst[i], lst[j], lst[k])
-
+ 
         # Se resta el costo de las aristas que eliminamos
         current_cost = original_cost - \
             travel_costs[lst[i-1][-1].id][lst[i][0].id] - travel_costs[lst[i][-1].id][lst[i+1][0].id] - \
@@ -101,12 +101,15 @@ def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities, 
     # Buscamos los posibles cambios dentro de la solucion con la que arrancamos
     possible_changes = create_list_subsolutions(P, D, S, Or, Dest)
     new_cost = original_cost
-
-    while current_percentage < break_percentage and max_intentos > 10:
+    res_S = None
+    while current_percentage < break_percentage and max_intentos > 0:
         for perm_cost, perm in three_opt_permutations_2(possible_changes, original_cost, travel_costs):
-            new_cost = perm_cost
-            S = perm
-            difference = original_cost - new_cost
-            current_percentage = (100 * difference) / original_cost
             max_intentos -= 1
-    return new_cost, S
+            if perm_cost < new_cost:
+                new_cost = perm_cost
+                res_S = perm
+                difference = original_cost - new_cost
+                current_percentage = (100 * difference) / original_cost
+                if max_intentos == 0 or current_percentage > break_percentage:
+                    break
+    return new_cost, res_S
