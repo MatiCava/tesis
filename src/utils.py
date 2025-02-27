@@ -15,7 +15,10 @@ def generate_routes_json():
 def calculate_cost(S, travel_costs):
     total = 0
     for i, node in enumerate(S[:-1]): # Evitamos visitar el nodo final
-        total += travel_costs[node.id][S[i+1].id]
+        print(node)
+        print("-")
+        # total += travel_costs[node.id][S[i+1].id]
+        total += travel_costs[node.id][node.next.id]
     return total
 
 def is_feasible_solution(S: list[Node], incompatibilities: list[list[int]]):
@@ -52,6 +55,11 @@ def generate_initial_solution(input):
 
         node_p = Node(id = p["id"], x = p["x"], y = p["y"], node_type = p["node_type"])
         node_d = Node(id = d["id"], x = d["x"], y = d["y"], node_type = d["node_type"])
+
+        S[-1].next = node_p
+        node_p.next = node_d
+        node_p.prev = S[-1]
+        node_d.prev = node_p
 
         S.append(node_p)
         S.append(node_d)

@@ -1,6 +1,7 @@
 import json
 import math
 import time
+from swap_local_search import swap_local_search
 from utils import generate_initial_solution, generate_routes_json, is_feasible_solution
 from three_opt import opt_3
 import itertools
@@ -29,4 +30,18 @@ def main():
         print("Tiempo de ejecucion: ", execution_time)
     print("Tiempo total de ejecucion: ", total_execution_time)
 
-main()
+
+def main_2():
+    route = generate_routes_json()[0]
+
+    with open(route, "r") as file:
+        input = json.load(file)
+
+    initial_S, P, D = generate_initial_solution(input)
+
+    final_cost, final_sol = swap_local_search(initial_S, input["travel_costs"], input["incompatibilities"])
+
+    print("Sol final: ", final_sol)
+    print("Costo final: ", final_cost)
+
+main_2()
