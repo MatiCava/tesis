@@ -15,10 +15,9 @@ def generate_routes_json():
 def calculate_cost(S, travel_costs):
     total = 0
     for i, node in enumerate(S[:-1]): # Evitamos visitar el nodo final
-        print(node)
-        print("-")
         # total += travel_costs[node.id][S[i+1].id]
-        total += travel_costs[node.id][node.next.id]
+        cost = travel_costs[node.id][S[i+1].id] if node.next == None else travel_costs[node.id][node.next.id]
+        total += cost
     return total
 
 def is_feasible_solution(S: list[Node], incompatibilities: list[list[int]]):
@@ -44,7 +43,7 @@ def generate_initial_solution(input):
     delivery_nodes = input["delivery_nodes"]
     final_node = input["final_destination"]
 
-    S = [Node(id = depot["id"], x = depot["x"], y = depot["y"], node_type = depot["node_type"])]
+    S = [Node(id = depot["id"], x = depot["x"], y = depot["y"], node_type = depot["node_type"], prev=None, next=None)]
     P = []
     D = []
 
@@ -53,19 +52,20 @@ def generate_initial_solution(input):
         p = pickup_nodes[i]
         d = delivery_nodes[i]
 
-        node_p = Node(id = p["id"], x = p["x"], y = p["y"], node_type = p["node_type"])
-        node_d = Node(id = d["id"], x = d["x"], y = d["y"], node_type = d["node_type"])
+        node_p = Node(id = p["id"], x = p["x"], y = p["y"], node_type = p["node_type"], prev=None, next=None)
+        node_d = Node(id = d["id"], x = d["x"], y = d["y"], node_type = d["node_type"], prev=None, next=None)
 
         S[-1].next = node_p
         node_p.next = node_d
         node_p.prev = S[-1]
         node_d.prev = node_p
-
         S.append(node_p)
         S.append(node_d)
         P.append(node_p)
         D.append(node_d)
 
-    S.append(Node(id = final_node["id"], x = final_node["x"], y = final_node["y"], node_type = final_node["node_type"]))
+    node_f = Node(id = final_node["id"], x = final_node["x"], y = final_node["y"], node_type = final_node["node_type"], prev=S[-1], next=None)
+    S[-1].next = node_f
+    S.append(node_f)
 
     return S, P, D

@@ -101,9 +101,9 @@ def swap_local_search(S, travel_costs, incompatibilities):
         
         new_cost = calculate_cost(new_sol, travel_costs)
 
-        print("Nueva sol: ", new_sol)
-        print("Costo: ", new_sol)
-        print("-")
+        # print("Nueva sol: ", new_sol)
+        # print("Costo: ", new_sol)
+        # print("-")
 
         n += 1
         if(new_cost < current_cost):
