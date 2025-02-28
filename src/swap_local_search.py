@@ -1,4 +1,4 @@
-from utils import calculate_cost
+from utils import calculate_cost, rearrange_solution
 
 
 def swap(S, travel_costs, incompatibilities):
@@ -39,6 +39,13 @@ def swap(S, travel_costs, incompatibilities):
                     curr_node.next = prev_node
 
                     yield 1, S
+
+                    curr_node.prev.next = prev_node
+                    prev_node.next.prev = curr_node
+                    prev_node.prev = curr_node.prev
+                    curr_node.prev = prev_node
+                    curr_node.next = prev_node.next
+                    prev_node.next = curr_node
                 
                 # Generamos soluciones hacia adelante
                 if(curr_node.id != next_node.id 
@@ -55,6 +62,14 @@ def swap(S, travel_costs, incompatibilities):
                     curr_node.prev = next_node
 
                     yield 1, S
+
+                    curr_node.next.prev = next_node
+                    next_node.prev.next = curr_node
+                    next_node.next = curr_node.next
+                    curr_node.prev = next_node.prev
+                    curr_node.next = next_node
+                    next_node.prev = curr_node
+
             # En caso de que sea un delivery
             else:
                 # Generamos soluciones hacia adelante
@@ -72,6 +87,13 @@ def swap(S, travel_costs, incompatibilities):
 
                     yield 1, S
 
+                    curr_node.next.prev = next_node
+                    next_node.prev.next = curr_node
+                    curr_node.prev = next_node.prev
+                    next_node.next = curr_node.next
+                    next_node.prev = curr_node
+                    curr_node.next = next_node
+
                 # Generamos soluciones hacia atras
                 if(curr_node.id != prev_node.id 
                    and (curr_node, prev_node) not in swaps and (prev_node, curr_node) not in swaps):
@@ -88,24 +110,33 @@ def swap(S, travel_costs, incompatibilities):
 
                     yield 1, S
 
+                    # [0, P1, D1, P3, P2, D2, D3, F]
+                    # [0, P1, D1, P3, P2, D3, D2, F]
+                    # Current: D3
+                    # Prev: D2
+
+                    curr_node.prev.next = prev_node
+                    prev_node.next.prev = curr_node
+                    curr_node.next = prev_node.next
+                    prev_node.prev = curr_node.prev
+                    prev_node.next = curr_node
+                    curr_node.prev = prev_node
+
 
 def swap_local_search(S, travel_costs, incompatibilities):
 
     current_sol = S
     current_cost = calculate_cost(S, travel_costs)
     
-    n = 0
-    for _, new_sol in swap(S, travel_costs, incompatibilities):
-        if n > 1:
-            return current_cost, current_sol
+    for _, sol in swap(S, travel_costs, incompatibilities):
+
+        new_sol = rearrange_solution(sol)
+
+        print("Sol: ", new_sol)
         
         new_cost = calculate_cost(new_sol, travel_costs)
 
-        # print("Nueva sol: ", new_sol)
-        # print("Costo: ", new_sol)
-        # print("-")
-
-        n += 1
+        #n += 1
         if(new_cost < current_cost):
             current_cost = new_cost
             current_sol = new_sol
