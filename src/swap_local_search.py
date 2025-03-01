@@ -31,22 +31,33 @@ def swap(S, travel_costs, incompatibilities):
                     swaps.add((curr_node, prev_node))
                     swaps.add((prev_node, curr_node))
 
-                    prev_node.prev.next = curr_node
-                    curr_node.next.prev = prev_node
-                    curr_node.prev = prev_node.prev
-                    prev_node.prev = curr_node
-                    prev_node.next = curr_node.next
-                    curr_node.next = prev_node
+                    curr_node.prev = S[prev_pos - 1]
+                    curr_node.next = S[prev_pos]
+
+                    prev_node.prev = S[node_pos]
+                    
+                    S[prev_pos - 1].next = S[node_pos]
+
+                    S[node_pos + 1].prev = S[node_pos - 1]
+                    S[node_pos - 1].next = S[node_pos + 1]
 
                     yield 1, S
 
-                    curr_node.prev.next = prev_node
-                    prev_node.next.prev = curr_node
-                    prev_node.prev = curr_node.prev
-                    curr_node.prev = prev_node
-                    curr_node.next = prev_node.next
-                    prev_node.next = curr_node
-                
+                    curr_node.prev = S[node_pos - 1]
+                    curr_node.next = S[node_pos + 1]
+
+                    prev_node.prev = S[prev_pos - 1]
+                    
+                    S[prev_pos - 1].next = S[prev_pos]
+
+                    S[node_pos + 1].prev = S[node_pos]
+                    S[node_pos - 1].next = S[node_pos]
+
+
+
+
+
+                '''          
                 # Generamos soluciones hacia adelante
                 if(curr_node.id != next_node.id 
                    and (curr_node, next_node) not in swaps and (next_node, curr_node) not in swaps):
@@ -121,7 +132,7 @@ def swap(S, travel_costs, incompatibilities):
                     prev_node.prev = curr_node.prev
                     prev_node.next = curr_node
                     curr_node.prev = prev_node
-
+                 '''
 
 def swap_local_search(S, travel_costs, incompatibilities):
 
@@ -132,11 +143,10 @@ def swap_local_search(S, travel_costs, incompatibilities):
 
         new_sol = rearrange_solution(sol)
 
-        print("Sol: ", new_sol)
+        #print("Sol: ", new_sol)
         
         new_cost = calculate_cost(new_sol, travel_costs)
 
-        #n += 1
         if(new_cost < current_cost):
             current_cost = new_cost
             current_sol = new_sol

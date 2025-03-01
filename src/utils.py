@@ -71,13 +71,16 @@ def generate_initial_solution(input):
     return S, P, D
 
 def rearrange_solution(S):
+    print("Sol: ", S)
     new_s = []
     curr_node = S[0]
 
     while(curr_node.node_type != "final"):
+        print("Current: ", curr_node)
         new_s.append(curr_node)
         curr_node = curr_node.next
 
     new_s.append(S[-1])
-
+    print("Sol r: ", new_s)
+    print("---")
     return new_s
