@@ -101,7 +101,7 @@ def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities, 
     # Buscamos los posibles cambios dentro de la solucion con la que arrancamos
     possible_changes = create_list_subsolutions(P, D, S, Or, Dest)
     new_cost = original_cost
-    res_S = None
+    res_S = S
     while current_percentage < break_percentage and max_intentos > 0:
         for perm_cost, perm in three_opt_permutations_2(possible_changes, original_cost, travel_costs):
             max_intentos -= 1
