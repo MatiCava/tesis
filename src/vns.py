@@ -18,6 +18,6 @@ def VNS(P, D, initial_S, travel_costs, Or, Dest, incompatibilities, break_percen
         if improved_cost < current_cost:
             current_cost, current_solution = improved_cost, improved_solution
         else: 
-            if improved_solution == initial_S:
+            if improved_solution == current_solution:
                 break
     return current_cost, current_solution
