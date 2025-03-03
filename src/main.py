@@ -1,6 +1,7 @@
 import json
 import math
 import time
+from vns import vns
 from swap_local_search import swap_local_search
 from utils import generate_initial_solution, generate_routes_json, is_feasible_solution
 from three_opt import opt_3
@@ -47,5 +48,17 @@ def main_2():
 
     print("Sol final: ", sol)
     print("Costo final: ", cost)
+
+def main_3():
+    route = generate_routes_json()[0]
+    with open(route, "r") as file:
+        input = json.load(file)
+    initial_S, P, D = generate_initial_solution(input)
+    vns_max_intentos = 100
+    break_percentage = 15
+    len_nodes = len(P) + 2
+    three_opt_max_intentos = math.ceil(break_percentage * (len_nodes * len_nodes) / 100)
+    res_cost, res_sol = vns(P, D, initial_S, input["travel_costs"], input["depot"], input["final_destination"], input["incompatibilities"], break_percentage, three_opt_max_intentos, vns_max_intentos)
+
 
 main_2()
