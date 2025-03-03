@@ -5,7 +5,6 @@ from vns import vns
 from swap_local_search import swap_local_search
 from utils import generate_initial_solution, generate_routes_json, is_feasible_solution
 from three_opt import opt_3
-import itertools
 
 def main():
 

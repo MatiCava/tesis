@@ -1,5 +1,3 @@
-import copy
-import random
 from utils import calculate_cost, rearrange_solution
 
 
