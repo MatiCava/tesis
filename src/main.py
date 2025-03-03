@@ -39,9 +39,13 @@ def main_2():
 
     initial_S, P, D = generate_initial_solution(input)
 
-    final_cost, final_sol = swap_local_search(initial_S, input["travel_costs"], input["incompatibilities"])
+    sol = initial_S
+    cost = -1
 
-    print("Sol final: ", final_sol)
-    print("Costo final: ", final_cost)
+    for _ in range(10):
+        cost, sol = swap_local_search(sol, input["travel_costs"], input["incompatibilities"])
+
+    print("Sol final: ", sol)
+    print("Costo final: ", cost)
 
 main_2()

@@ -5,7 +5,7 @@ import os
 
 # Función para calcular la distancia euclidiana
 def euclidean_distance(p1, p2):
-    return math.hypot(p1["x"] - p2["x"], p1["y"] - p2["y"])
+    return int(round(math.hypot(p1["x"] - p2["x"], p1["y"] - p2["y"]), 0))
 
 # Valores de n
 n_values = [5, 10, 15, 20, 25, 30, 35]
@@ -17,7 +17,7 @@ instance_labels = ['a', 'b', 'c', 'd', 'e']
 densities = [0, 0.1, 0.25, 0.5, 0.75]
 
 # Ruta donde guardar las instancias
-base_dir = "Instances"
+base_dir = "..\Instances"
 os.makedirs(base_dir, exist_ok=True)
 
 # Generar las instancias
@@ -40,13 +40,13 @@ for n in n_values:
             final_destination_coord = (random.randint(0, 1000), random.randint(0, 1000))
 
         # Creamos el nodo final
-        final_destination = {"x": final_destination_coord[0], "y": final_destination_coord[1], "node_type": "final", "id": n + 1}
+        final_destination = {"x": final_destination_coord[0], "y": final_destination_coord[1], "node_type": "final", "id": n + 1, "item_id": 0}
 
         # El primer punto es el depósito
-        depot = {"x": points[0][0], "y": points[0][1], "node_type": "depot", "id": 0}
+        depot = {"x": points[0][0], "y": points[0][1], "node_type": "depot", "id": 0, "item_id": 0}
         
-        pickups = [{"x": points[i][0], "y": points[i][1], "node_type": "pickup", "id": i} for i in range(1, n+1)]
-        deliveries = [{"x": points[i][0], "y": points[i][1], "node_type": "delivery", "id": i - n} for i in range(n+1, 2*n+1)]
+        pickups = [{"x": points[i][0], "y": points[i][1], "node_type": "pickup", "id": i, "item_id": i} for i in range(1, n+1)]
+        deliveries = [{"x": points[i][0], "y": points[i][1], "node_type": "delivery", "id": i, "item_id": i - n} for i in range(n+1, 2*n+1)]
 
         # Crear lista completa de nodos
         all_nodes = [depot] + pickups + deliveries + [final_destination]
