@@ -81,8 +81,8 @@ def swap_local_search(S, travel_costs, incompatibilities):
 
     for cost, a, b in solutions:
 
-        new_s = rearrange_solution(S, a, b, incompatibilities)
-        new_c = calculate_cost(new_s, travel_costs)
+        #new_s = rearrange_solution(S, a, b, incompatibilities)
+        #new_c = calculate_cost(new_s, travel_costs)
 
         if(cost < current_cost):
             current_cost = cost

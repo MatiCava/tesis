@@ -1,3 +1,4 @@
+import copy
 import itertools
 from node import Node
 from utils import calculate_cost
@@ -21,15 +22,14 @@ def create_list_subsolutions(P, D, S, Or, Dest):
     # No utilizamos deposito ni destino final
     for i in range(1, len(S) - 1):
         node = S[i]
+        current_solution.append(node)
         if node in P:
-            shared[node.id] = node
-            current_solution.append(node)
+            shared[node.item_id] = node
         if node in D:
-            del shared[node.id]
+            del shared[node.item_id]
             # Si shared esta vacia, significa que podemos partir la solucion en este punto
             # Lo que sigue en la solucion seria parte de otro subgrafo, ya que no hay items compartidos
             if not shared:
-                current_solution.append(node)
                 solutions.append(current_solution) # Lista de listas
                 current_solution = []
     return [[S[0]]] + solutions + [[S[-1]]]
@@ -99,17 +99,36 @@ def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities, 
     difference = original_cost - original_cost
     current_percentage = (100 * difference) / original_cost
     # Buscamos los posibles cambios dentro de la solucion con la que arrancamos
+    print("SOL RECIBIDA 3 OPT")
+    print(S)
+    print("-----------")
     possible_changes = create_list_subsolutions(P, D, S, Or, Dest)
+    print("POSIBLES CMABIOS")
+    print(possible_changes)
+    print("-----------")
     new_cost = original_cost
-    res_S = S
+    res_S = None
+    print("OG COST")
+    print(original_cost)
+    print("-----------")
     while current_percentage < break_percentage and max_intentos > 0:
         for perm_cost, perm in three_opt_permutations_2(possible_changes, original_cost, travel_costs):
             max_intentos -= 1
+
+            print("PERM COST y PERM")
+            print("PERM: ", perm)
+            print("Actual: ", res_S)
+            print(perm_cost)
+            print(new_cost)
+            print(perm_cost < new_cost)
+            print("-----------")
             if perm_cost < new_cost:
                 new_cost = perm_cost
-                res_S = perm
+                res_S = copy.deepcopy(perm)
                 difference = original_cost - new_cost
                 current_percentage = (100 * difference) / original_cost
                 if max_intentos == 0 or current_percentage > break_percentage:
                     break
+    print("RES 3OPT ")
+    print(res_S)
     return new_cost, res_S
