@@ -6,11 +6,6 @@ def rearrange_solution(S, pos_1, pos_2, incompatibilities):
         new_s = S[:pos_2] + [S[pos_1]] + S[pos_2 : pos_1] + S[pos_1 + 1:]
     elif(pos_2 > pos_1):
         new_s = S[:pos_1] + S[pos_1 + 1:pos_2] + [S[pos_2]] + [S[pos_1]] + S[pos_2 + 1:]
-    
-    if(not is_feasible_solution(new_s, incompatibilities)):
-        print("-------------------------------------")
-        print("--- SOLUCION INVALIDA: ---")
-        print("-------------------------------------")
 
     return new_s
 

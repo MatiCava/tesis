@@ -49,16 +49,23 @@ def main_2():
     print("Costo final: ", cost)
 
 def main_3():
-    route = generate_routes_json()[0]
-    with open(route, "r") as file:
-        input = json.load(file)
-    initial_S, P, D = generate_initial_solution(input)
-    vns_max_intentos = 100
-    break_percentage = 15
-    len_nodes = len(P) + 2
-    three_opt_max_intentos = math.ceil(break_percentage * (len_nodes * len_nodes) / 100)
-    res_cost, res_sol = VNS(P, D, initial_S, input["travel_costs"], input["depot"], input["final_destination"], input["incompatibilities"], break_percentage, three_opt_max_intentos, vns_max_intentos)
-    print("Sol final: ", res_sol)
-    print("Costo final: ", res_cost)
+    routes_json = generate_routes_json()
+    total_execution_time = 0
+    for route in routes_json:
+        start_time = time.time()
+        with open(route, "r") as file:
+            input = json.load(file)
+        initial_S, P, D = generate_initial_solution(input)
+        vns_max_intentos = 100
+        res_cost, res_sol = VNS(P, D, initial_S, input["travel_costs"], input["depot"], input["final_destination"], input["incompatibilities"], vns_max_intentos)
+        is_correct_sol = is_feasible_solution(res_sol, input["incompatibilities"])
+        end_time = time.time()
+        execution_time = end_time - start_time
+        total_execution_time += execution_time
+        print("Sol final: ", res_sol)
+        print("Costo final: ", res_cost)
+        print("Es una solucion correcta? ", is_correct_sol)
+        print("Tiempo de ejecucion: ", execution_time)
+    print("Tiempo total de ejecucion: ", total_execution_time)
 
 main_3()

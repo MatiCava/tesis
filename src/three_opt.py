@@ -125,7 +125,7 @@ def three_opt_permutations(lst, original_cost, travel_costs):
 
     return best_result, combs, perms
 
-def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities, max_intentos):
+def opt_3(P, D, S, Or, Dest, travel_costs):
     
     # Inicilizamos el costo original de la solucion con la que arrancamos
     original_cost = calculate_cost(S, travel_costs)
