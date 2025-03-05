@@ -62,24 +62,3 @@ def generate_initial_solution(input):
     S.append(node_f)
 
     return S, P, D
-
-def rearrange_solution(S, pos_1, pos_2, incompatibilities):
-
-    new_s = S
-
-    if(pos_2 < pos_1):
-        new_s = S[:pos_2] + [S[pos_1]] + S[pos_2 : pos_1] + S[pos_1 + 1:]
-    elif(pos_2 > pos_1):
-        new_s = S[:pos_1] + S[pos_1 + 1:pos_2] + [S[pos_2]] + [S[pos_1]] + S[pos_2 + 1:]
-    
-    if(not is_feasible_solution(new_s, incompatibilities)):
-        print("-------------------------------------")
-        print("--- SOLUCION INVALIDA: ---")
-        print("Original: ", S)
-        print("Pos_1: ", pos_1)
-        print("Pos_2: ", pos_2)
-        print("Nueva: ", new_s)
-        print("Inc: ", incompatibilities[S[pos_1].item_id - 1][S[pos_2].item_id - 1])
-        print("-------------------------------------")
-
-    return new_s

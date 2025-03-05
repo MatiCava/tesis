@@ -1,5 +1,3 @@
-import copy
-import itertools
 from node import Node
 from utils import calculate_cost
 from itertools import combinations, permutations
@@ -34,62 +32,98 @@ def create_list_subsolutions(P, D, S, Or, Dest):
                 current_solution = []
     return [[S[0]]] + solutions + [[S[-1]]]
 
-def three_opt_permutations_2(lst, original_cost, travel_costs):
+def rearrange_solution(S, combs, perms):
+    new_s = []
+    for i in range(0, len(S)):
+        if(i in combs):
+            # Tengo que poner lo que diga perms
+            sublist = S[perms[combs.index(i)]]
+            new_s.append(sublist)
+        else:
+            new_s.append(S[i])
+    return [node for sublist in new_s for node in sublist]
+
+def subtract_edges(lst, original_cost, values, travel_costs):
+    edges = set()
+    total = original_cost
+    for i in values:
+        if((i, i+1) not in edges and (i+1, i) not in edges):
+            edges.add((i, i+1))
+            edges.add((i+1, i))
+
+            total -= travel_costs[lst[i][-1].id][lst[i+1][0].id]
+            
+        if((i, i-1) not in edges and (i-1, i) not in edges):
+            edges.add((i, i-1))
+            edges.add((i-1, i))
+            total -= travel_costs[lst[i-1][-1].id][lst[i][0].id]
+        
+    return total
+
+def add_edges(lst, original_cost, combs, perms, travel_costs):
+    edges = set()
+    total = original_cost
+
+    for i in range(0, 3):
+        a = combs[i]
+        b = perms[i]
+
+        # Arista de atras hacia nuestro nodo
+        if((a-1) not in combs):
+            if((a - 1, b) not in edges and (b, a - 1) not in edges):
+                edges.add((a - 1, b))
+                edges.add((b, a - 1))
+
+                total += travel_costs[lst[a - 1][-1].id][lst[b][0].id]
+        else:
+            c = combs.index(a - 1)
+            if((a - 1, perms[c]) not in edges and (perms[c], a - 1) not in edges):
+                edges.add((a - 1, perms[c]))
+                edges.add((perms[c], a - 1))
+
+                total += travel_costs[lst[perms[c]][-1].id][lst[b][0].id]
+
+        # Arista de nuestro nodo hacia adelante
+        if((a+1) not in combs):
+            if((a + 1, b) not in edges and (b, a + 1) not in edges):
+                edges.add((a + 1, b))
+                edges.add((b, a + 1))
+
+                total += travel_costs[lst[b][-1].id][lst[a + 1][0].id]
+        else:
+            c = combs.index(a + 1)
+            if((a + 1, perms[c]) not in edges and (perms[c], a + 1) not in edges):
+                edges.add((a + 1, perms[c]))
+                edges.add((perms[c], a + 1))
+
+                total += travel_costs[lst[b][-1].id][lst[perms[c]][0].id]
+        
+    return total
+
+
+def three_opt_permutations(lst, original_cost, travel_costs):
     size = len(lst)
+    best_result = original_cost
+    perms = ()
+    combs = ()
     
     # Hacemos este rango para evitar mover el origen y el final
     for i, j, k in combinations(range(1, size - 1), 3):
-        original = (lst[i], lst[j], lst[k])
  
         # Se resta el costo de las aristas que eliminamos
-        current_cost = original_cost - \
-            travel_costs[lst[i-1][-1].id][lst[i][0].id] - travel_costs[lst[i][-1].id][lst[i+1][0].id] - \
-            travel_costs[lst[j-1][-1].id][lst[j][0].id] - travel_costs[lst[j][-1].id][lst[j+1][0].id] - \
-            travel_costs[lst[k-1][-1].id][lst[k][0].id] - travel_costs[lst[k][-1].id][lst[k+1][0].id]
+        current_cost = subtract_edges(lst, original_cost, [i, j, k], travel_costs)
 
         for l, m, n in set(permutations([i, j, k])):
-            val_l, val_m, val_n = lst[l], lst[m], lst[n]
-            lst[l], lst[m], lst[n] = original
-            lst[i], lst[j], lst[k] = val_l, val_m, val_n
             
             # Se suma el costo de las nuevas aristas
-            new_cost = current_cost + \
-                travel_costs[lst[l-1][-1].id][lst[l][0].id] + travel_costs[lst[l][-1].id][lst[l+1][0].id] + \
-                travel_costs[lst[m-1][-1].id][lst[m][0].id] + travel_costs[lst[m][-1].id][lst[m+1][0].id] + \
-                travel_costs[lst[n-1][-1].id][lst[n][0].id] + travel_costs[lst[n][-1].id][lst[n+1][0].id]
+            new_cost = add_edges(lst, current_cost, [i, j, k], [l, m, n], travel_costs)
 
-            yield new_cost, lst
+            if(new_cost < best_result):
+                best_result = new_cost
+                combs = (i, j, k)
+                perms = (l, m, n)
 
-            lst[i], lst[j], lst[k] = original
-            lst[l], lst[m], lst[n] = val_l, val_m, val_n
-
-
-def three_opt_permutations(lst):
-    n = len(lst)
-    results = set()
-    results_list = []
-    
-    # Hacemos este rango para evitar mover el origen y el final
-    for i, j, k in combinations(range(1, n - 1), 3):
-        original = (lst[i], lst[j], lst[k])
-        original_tuples = tuple(map(tuple, original))
-        if len(set(original_tuples)) > 1:  # Solo permutar si hay diferencias
-            unique_perms = set(permutations(original_tuples))
-            for perm in unique_perms:
-                lst[i], lst[j], lst[k] = perm
-                snapshot = tuple(tuple(x) for x in lst)
-                results.add(snapshot)
-                
-            lst[i], lst[j], lst[k] = original
-
-    for res in results:
-        perm_list = []
-        for tup in res:
-            perm_list.append(tup[0])
-            perm_list.append(tup[1])
-        results_list.append(perm_list)
-    
-    return results_list
+    return best_result, combs, perms
 
 def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities, max_intentos):
     
@@ -99,36 +133,10 @@ def opt_3(P, D, S, Or, Dest, travel_costs, break_percentage, incompatibilities, 
     difference = original_cost - original_cost
     current_percentage = (100 * difference) / original_cost
     # Buscamos los posibles cambios dentro de la solucion con la que arrancamos
-    print("SOL RECIBIDA 3 OPT")
-    print(S)
-    print("-----------")
-    possible_changes = create_list_subsolutions(P, D, S, Or, Dest)
-    print("POSIBLES CMABIOS")
-    print(possible_changes)
-    print("-----------")
-    new_cost = original_cost
-    res_S = None
-    print("OG COST")
-    print(original_cost)
-    print("-----------")
-    while current_percentage < break_percentage and max_intentos > 0:
-        for perm_cost, perm in three_opt_permutations_2(possible_changes, original_cost, travel_costs):
-            max_intentos -= 1
 
-            print("PERM COST y PERM")
-            print("PERM: ", perm)
-            print("Actual: ", res_S)
-            print(perm_cost)
-            print(new_cost)
-            print(perm_cost < new_cost)
-            print("-----------")
-            if perm_cost < new_cost:
-                new_cost = perm_cost
-                res_S = copy.deepcopy(perm)
-                difference = original_cost - new_cost
-                current_percentage = (100 * difference) / original_cost
-                if max_intentos == 0 or current_percentage > break_percentage:
-                    break
-    print("RES 3OPT ")
-    print(res_S)
-    return new_cost, res_S
+    possible_changes = create_list_subsolutions(P, D, S, Or, Dest)
+    new_cost, combs, perms = three_opt_permutations(possible_changes, original_cost, travel_costs)
+
+    new_s = rearrange_solution(possible_changes, combs, perms)
+
+    return new_cost, new_s

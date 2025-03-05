@@ -1,5 +1,18 @@
-from utils import calculate_cost, rearrange_solution
+from utils import calculate_cost, is_feasible_solution
 
+def rearrange_solution(S, pos_1, pos_2, incompatibilities):
+    new_s = S
+    if(pos_2 < pos_1):
+        new_s = S[:pos_2] + [S[pos_1]] + S[pos_2 : pos_1] + S[pos_1 + 1:]
+    elif(pos_2 > pos_1):
+        new_s = S[:pos_1] + S[pos_1 + 1:pos_2] + [S[pos_2]] + [S[pos_1]] + S[pos_2 + 1:]
+    
+    if(not is_feasible_solution(new_s, incompatibilities)):
+        print("-------------------------------------")
+        print("--- SOLUCION INVALIDA: ---")
+        print("-------------------------------------")
+
+    return new_s
 
 def swap(S, initial_cost, travel_costs, incompatibilities):
 
@@ -80,10 +93,6 @@ def swap_local_search(S, travel_costs, incompatibilities):
     solutions = swap(S, current_cost, travel_costs, incompatibilities)
 
     for cost, a, b in solutions:
-
-        #new_s = rearrange_solution(S, a, b, incompatibilities)
-        #new_c = calculate_cost(new_s, travel_costs)
-
         if(cost < current_cost):
             current_cost = cost
             pos_1, pos_2 = a, b
