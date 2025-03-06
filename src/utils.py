@@ -1,4 +1,6 @@
 from node import Node
+import pandas as pd
+import os
 
 def generate_routes_json():
     instance_labels = ['a', 'b', 'c', 'd', 'e']
@@ -62,3 +64,11 @@ def generate_initial_solution(input):
     S.append(node_f)
 
     return S, P, D
+
+def generate_table_results(results, who):
+    base_dir = "..\Results"
+    os.makedirs(base_dir, exist_ok=True)
+    df = pd.DataFrame(results)
+    print(df)
+    csv_path = os.path.join(base_dir, "results_" + who +".csv")
+    df.to_csv(csv_path, index=False, encoding="utf-8")
