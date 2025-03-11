@@ -93,3 +93,35 @@ def swap_local_search(S, travel_costs, incompatibilities):
             pos_1, pos_2 = a, b
 
     return current_cost, rearrange_solution(S, pos_1, pos_2, incompatibilities)
+
+def swap_local_search_2(S, travel_costs, incompatibilities):
+
+    current_cost = calculate_cost(S, travel_costs)
+    pos_1, pos_2 = 0, 0
+    current_sol = S
+
+    while True:
+        update_sol = False
+        #print("CURRENT SOL ", current_sol)
+        solutions = swap(current_sol, current_cost, travel_costs, incompatibilities)
+        #print("SOLUTIONS SIZE ", len(solutions))
+        for cost, a, b in solutions:          
+            if(cost < current_cost):
+                # print("CURRENT COST ", current_cost)
+                # print("COST ", cost)
+                current_cost = cost
+                pos_1, pos_2 = a, b
+                update_sol = True
+                # print("POS_1 ", pos_1)
+                # print("POS_2 ", pos_2)
+
+        # print("CHECK BREAK ", update_sol)
+        if not update_sol:
+            # print("ENTRRE BREAAAK")
+            break
+
+        current_sol = rearrange_solution(current_sol, pos_1, pos_2, incompatibilities)
+        # print("CURRENT SOL POST REARRANGE", current_sol)
+        # print("-------------------")
+
+    return current_cost, current_sol

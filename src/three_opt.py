@@ -129,9 +129,6 @@ def opt_3(P, D, S, Or, Dest, travel_costs):
     
     # Inicilizamos el costo original de la solucion con la que arrancamos
     original_cost = calculate_cost(S, travel_costs)
-    # Inicializamos la diferencia con la que vamos a ir checkeando hasta alcanzar el porcentaje de mejora buscado
-    difference = original_cost - original_cost
-    current_percentage = (100 * difference) / original_cost
     # Buscamos los posibles cambios dentro de la solucion con la que arrancamos
 
     possible_changes = create_list_subsolutions(P, D, S, Or, Dest)
@@ -140,3 +137,32 @@ def opt_3(P, D, S, Or, Dest, travel_costs):
     new_s = rearrange_solution(possible_changes, combs, perms)
 
     return new_cost, new_s
+
+
+def opt_3_2(P, D, S, Or, Dest, travel_costs):
+    
+    # Inicilizamos el costo original de la solucion con la que arrancamos
+    current_sol = S
+    current_cost = calculate_cost(S, travel_costs)
+    sols_obtained = []
+
+    while True:
+        # print("CURRENT 3 OPT SOL ", current_sol)
+        possible_changes = create_list_subsolutions(P, D, current_sol, Or, Dest)
+        # print("3 OPT POSSIBLE CHANGES ", possible_changes)
+        new_cost, combs, perms = three_opt_permutations(possible_changes, current_cost, travel_costs)
+        # print("CURRENT COST ", current_cost)
+        # print("NEW COST ", new_cost)
+        if new_cost >= current_cost:
+            break
+
+        r_sol = rearrange_solution(possible_changes, combs, perms)
+        # print("CHECK CURRENT SOL ALREADY OBTAINED ", r_sol in sols_obtained)
+        if r_sol in sols_obtained:
+            break
+        current_cost = new_cost
+        current_sol = r_sol
+        sols_obtained.append(r_sol)
+        # print("CURRENT 3 OPT SOL POST REARRANGE", current_sol)
+        # print("-------------------")
+    return current_cost, current_sol

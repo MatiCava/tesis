@@ -84,9 +84,12 @@ def main_2():
 
 def main_3():
     routes_json = generate_routes_json()
+    # route = routes_json[40]
     total_execution_time = 0
     results = []
     for route in routes_json:
+        instance_name = route.split("/")[3]
+        print("Instancia ejecutada: ", route)
         start_time = time.time()
         with open(route, "r") as file:
             input = json.load(file)
@@ -98,15 +101,14 @@ def main_3():
         execution_time = end_time - start_time
         total_execution_time += execution_time
         route_inc = route.split("_")[1].split(".")
-        instance_name = route.split("/")[3]
-        print("Instancia ejecutada: ", instance_name)
+        
         if len(route_inc) > 2:
-            print("%Inc: ", route_inc[1])
+            #print("%Inc: ", route_inc[1])
             inc = route_inc[1]
         else:
-            print("%Inc: ", route_inc[0])
+            #print("%Inc: ", route_inc[0])
             inc = route_inc[0]
-        #print("Sol final: ", res_sol)
+        print("Sol final: ", res_sol)
         print("Costo final: ", res_cost)
         #print("Es una solucion correcta? ", is_correct_sol)
         print("Tiempo de ejecucion: ", execution_time)
@@ -117,7 +119,7 @@ def main_3():
             "Costo": res_cost,
             "Tiempo": execution_time
         })
-    generate_table_results(results, "vns")
+    # generate_table_results(results, "vns")
     print("Tiempo total de ejecucion: ", total_execution_time)
 
-main_2()
+main_3()
