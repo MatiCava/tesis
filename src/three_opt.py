@@ -46,18 +46,20 @@ def rearrange_solution(S, combs, perms):
 def subtract_edges(lst, original_cost, values, travel_costs):
     edges = set()
     total = original_cost
+
     for i in values:
+
+        if((i, i-1) not in edges and (i-1, i) not in edges):
+            edges.add((i, i-1))
+            edges.add((i-1, i))
+            total -= travel_costs[lst[i-1][-1].id][lst[i][0].id]
+
         if((i, i+1) not in edges and (i+1, i) not in edges):
             edges.add((i, i+1))
             edges.add((i+1, i))
 
             total -= travel_costs[lst[i][-1].id][lst[i+1][0].id]
-            
-        if((i, i-1) not in edges and (i-1, i) not in edges):
-            edges.add((i, i-1))
-            edges.add((i-1, i))
-            total -= travel_costs[lst[i-1][-1].id][lst[i][0].id]
-        
+
     return total
 
 def add_edges(lst, original_cost, combs, perms, travel_costs):
@@ -76,12 +78,13 @@ def add_edges(lst, original_cost, combs, perms, travel_costs):
 
                 total += travel_costs[lst[a - 1][-1].id][lst[b][0].id]
         else:
-            c = combs.index(a - 1)
-            if((a - 1, perms[c]) not in edges and (perms[c], a - 1) not in edges):
-                edges.add((a - 1, perms[c]))
-                edges.add((perms[c], a - 1))
+            c = perms[combs.index(a - 1)]
 
-                total += travel_costs[lst[perms[c]][-1].id][lst[b][0].id]
+            if((b, c) not in edges and (c, b) not in edges):
+                edges.add((b, c))
+                edges.add((c, b))
+
+                total += travel_costs[lst[c][-1].id][lst[b][0].id]
 
         # Arista de nuestro nodo hacia adelante
         if((a+1) not in combs):
@@ -91,13 +94,14 @@ def add_edges(lst, original_cost, combs, perms, travel_costs):
 
                 total += travel_costs[lst[b][-1].id][lst[a + 1][0].id]
         else:
-            c = combs.index(a + 1)
-            if((a + 1, perms[c]) not in edges and (perms[c], a + 1) not in edges):
-                edges.add((a + 1, perms[c]))
-                edges.add((perms[c], a + 1))
+            c = perms[combs.index(a + 1)]
 
-                total += travel_costs[lst[b][-1].id][lst[perms[c]][0].id]
-        
+            if((b, c) not in edges and (c, b) not in edges):
+                edges.add((b, c))
+                edges.add((c, b))
+
+                total += travel_costs[lst[b][-1].id][lst[c][0].id]
+    
     return total
 
 
@@ -106,10 +110,10 @@ def three_opt_permutations(lst, original_cost, travel_costs):
     best_result = original_cost
     perms = ()
     combs = ()
-    
+
     # Hacemos este rango para evitar mover el origen y el final
     for i, j, k in combinations(range(1, size - 1), 3):
- 
+
         # Se resta el costo de las aristas que eliminamos
         current_cost = subtract_edges(lst, original_cost, [i, j, k], travel_costs)
 
@@ -144,25 +148,15 @@ def opt_3_2(P, D, S, Or, Dest, travel_costs):
     # Inicilizamos el costo original de la solucion con la que arrancamos
     current_sol = S
     current_cost = calculate_cost(S, travel_costs)
-    sols_obtained = []
 
     while True:
-        # print("CURRENT 3 OPT SOL ", current_sol)
         possible_changes = create_list_subsolutions(P, D, current_sol, Or, Dest)
-        # print("3 OPT POSSIBLE CHANGES ", possible_changes)
         new_cost, combs, perms = three_opt_permutations(possible_changes, current_cost, travel_costs)
-        # print("CURRENT COST ", current_cost)
-        # print("NEW COST ", new_cost)
+
         if new_cost >= current_cost:
             break
-
-        r_sol = rearrange_solution(possible_changes, combs, perms)
-        # print("CHECK CURRENT SOL ALREADY OBTAINED ", r_sol in sols_obtained)
-        if r_sol in sols_obtained:
-            break
+        
         current_cost = new_cost
-        current_sol = r_sol
-        sols_obtained.append(r_sol)
-        # print("CURRENT 3 OPT SOL POST REARRANGE", current_sol)
-        # print("-------------------")
+        current_sol = rearrange_solution(possible_changes, combs, perms)
+
     return current_cost, current_sol
