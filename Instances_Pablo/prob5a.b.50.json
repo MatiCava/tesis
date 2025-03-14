@@ -1,0 +1,164 @@
+{
+    "depot": {
+        "x": 454,
+        "y": 42,
+        "node_type": "depot",
+        "id": 0,
+        "item_id": 0
+    },
+    "final_destination": {
+        "x": 454,
+        "y": 42,
+        "node_type": "final",
+        "id": 6,
+        "item_id": 0
+    },
+    "pickup_nodes": [
+        {
+            "x": 336,
+            "y": 835,
+            "node_type": "pickup",
+            "id": 1,
+            "item_id": 1
+        },
+        {
+            "x": 2,
+            "y": 565,
+            "node_type": "pickup",
+            "id": 2,
+            "item_id": 2
+        },
+        {
+            "x": 990,
+            "y": 188,
+            "node_type": "pickup",
+            "id": 3,
+            "item_id": 3
+        },
+        {
+            "x": 366,
+            "y": 750,
+            "node_type": "pickup",
+            "id": 4,
+            "item_id": 4
+        },
+        {
+            "x": 573,
+            "y": 351,
+            "node_type": "pickup",
+            "id": 5,
+            "item_id": 5
+        }
+    ],
+    "delivery_nodes": [
+        {
+            "x": 64,
+            "y": 133,
+            "node_type": "delivery",
+            "id": 7,
+            "item_id": 1
+        },
+        {
+            "x": 154,
+            "y": 951,
+            "node_type": "delivery",
+            "id": 8,
+            "item_id": 2
+        },
+        {
+            "x": 217,
+            "y": 585,
+            "node_type": "delivery",
+            "id": 9,
+            "item_id": 3
+        },
+        {
+            "x": 140,
+            "y": 807,
+            "node_type": "delivery",
+            "id": 10,
+            "item_id": 4
+        },
+        {
+            "x": 211,
+            "y": 622,
+            "node_type": "delivery",
+            "id": 11,
+            "item_id": 5
+        }
+    ],
+    "travel_costs": [
+        [
+            0,
+            802,
+            691,
+            556,
+            713
+        ],
+        [
+            802,
+            0,
+            429,
+            920,
+            90
+        ],
+        [
+            691,
+            429,
+            0,
+            1057,
+            408
+        ],
+        [
+            556,
+            920,
+            1057,
+            0,
+            840
+        ],
+        [
+            713,
+            90,
+            408,
+            840,
+            0
+        ]
+    ],
+    "incompatibilities": [
+        [
+            0,
+            0,
+            1,
+            1,
+            1
+        ],
+        [
+            0,
+            0,
+            0,
+            1,
+            0
+        ],
+        [
+            1,
+            0,
+            0,
+            0,
+            0
+        ],
+        [
+            1,
+            1,
+            0,
+            0,
+            1
+        ],
+        [
+            1,
+            0,
+            0,
+            1,
+            0
+        ]
+    ]
+}

@@ -1,11 +1,7 @@
 import random
-import math
 import json
 import os
-
-# Función para calcular la distancia euclidiana
-def euclidean_distance(p1, p2):
-    return int(round(math.hypot(p1["x"] - p2["x"], p1["y"] - p2["y"]), 0))
+from utils import euclidean_distance
 
 # Valores de n
 n_values = [5, 10, 15, 20, 25, 30, 35]

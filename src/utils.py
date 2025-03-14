@@ -1,6 +1,10 @@
+import math
 from node import Node
 import pandas as pd
 import os
+
+def euclidean_distance(p1, p2):
+    return int(round(math.hypot(p1["x"] - p2["x"], p1["y"] - p2["y"]), 0))
 
 def generate_routes_json():
     instance_labels = ['a', 'b', 'c', 'd', 'e']
