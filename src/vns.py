@@ -3,7 +3,7 @@ from swap_local_search import swap_local_search, swap_local_search_2
 from three_opt import opt_3, opt_3_2
 
 
-def VNS(P, D, initial_S, travel_costs, incompatibilities, vns_max_intentos):
+def VNS(initial_S, travel_costs, incompatibilities, vns_max_intentos):
     current_solution = initial_S
     current_cost = calculate_cost(current_solution, travel_costs)
 
@@ -14,7 +14,7 @@ def VNS(P, D, initial_S, travel_costs, incompatibilities, vns_max_intentos):
         # print("COST SWAP: ", improved_cost)
         # print("-----------------")
         # Segunda búsqueda local: 3 opt sobre la solución mejorada
-        improved_cost, improved_solution_3_opt = opt_3_2(P, D, improved_solution, travel_costs)
+        improved_cost, improved_solution_3_opt = opt_3_2(improved_solution, travel_costs)
         # print("SOL 3 OPT: ", improved_solution_3_opt)
         # print("COST 3 OPT: ", improved_cost)
         # print("-----------------")

@@ -7,10 +7,8 @@ from itertools import combinations, permutations
 # La intencion de esta funcion es partir la solucion en distintas listas, que en el fondo representan la misma idea de encontrar subgrafos aislados.
 # O(n) donde n es el largo de la solucion (2 * cantidad de items)
 
-# P lista nodos de pickups
-# D lista nodos de delivery
 # S solucion valida
-def create_list_subsolutions(P, D, S):
+def create_list_subsolutions(S):
     # Lista de elementos que estan actualmente en el auto
     shared = {}
     # Solucion actual
@@ -21,9 +19,9 @@ def create_list_subsolutions(P, D, S):
     for i in range(1, len(S) - 1):
         node = S[i]
         current_solution.append(node)
-        if node in P:
+        if node.node_type == "pickup":
             shared[node.item_id] = node
-        if node in D:
+        if node.node_type == "delivery":
             del shared[node.item_id]
             # Si shared esta vacia, significa que podemos partir la solucion en este punto
             # Lo que sigue en la solucion seria parte de otro subgrafo, ya que no hay items compartidos
@@ -129,31 +127,30 @@ def three_opt_permutations(lst, original_cost, travel_costs):
 
     return best_result, combs, perms
 
-def opt_3(P, D, S, travel_costs):
+def opt_3(S, travel_costs):
     
     # Inicilizamos el costo original de la solucion con la que arrancamos
     original_cost = calculate_cost(S, travel_costs)
     # Buscamos los posibles cambios dentro de la solucion con la que arrancamos
 
-    possible_changes = create_list_subsolutions(P, D, S)
+    possible_changes = create_list_subsolutions(S)
     new_cost, combs, perms = three_opt_permutations(possible_changes, original_cost, travel_costs)
 
     new_s = rearrange_solution(possible_changes, combs, perms)
 
     return new_cost, new_s
 
-# LIMPIAR P Y D
 # RENOMBRAR A three_opt
 # Sacar los _2
 # Que reciba el costo por parametro y eliminar linea 153
-def opt_3_2(P, D, S, travel_costs):
+def opt_3_2(S, travel_costs):
     
     # Inicilizamos el costo original de la solucion con la que arrancamos
     current_sol = S
     current_cost = calculate_cost(S, travel_costs)
 
     while True:
-        possible_changes = create_list_subsolutions(P, D, current_sol)
+        possible_changes = create_list_subsolutions(current_sol)
         new_cost, combs, perms = three_opt_permutations(possible_changes, current_cost, travel_costs)
 
         if new_cost >= current_cost:
