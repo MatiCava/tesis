@@ -142,7 +142,10 @@ def opt_3(P, D, S, travel_costs):
 
     return new_cost, new_s
 
-
+# LIMPIAR P Y D
+# RENOMBRAR A three_opt
+# Sacar los _2
+# Que reciba el costo por parametro y eliminar linea 153
 def opt_3_2(P, D, S, travel_costs):
     
     # Inicilizamos el costo original de la solucion con la que arrancamos
