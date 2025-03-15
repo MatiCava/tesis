@@ -10,7 +10,7 @@ from itertools import combinations, permutations
 # P lista nodos de pickups
 # D lista nodos de delivery
 # S solucion valida
-def create_list_subsolutions(P, D, S, Or, Dest):
+def create_list_subsolutions(P, D, S):
     # Lista de elementos que estan actualmente en el auto
     shared = {}
     # Solucion actual
@@ -129,13 +129,13 @@ def three_opt_permutations(lst, original_cost, travel_costs):
 
     return best_result, combs, perms
 
-def opt_3(P, D, S, Or, Dest, travel_costs):
+def opt_3(P, D, S, travel_costs):
     
     # Inicilizamos el costo original de la solucion con la que arrancamos
     original_cost = calculate_cost(S, travel_costs)
     # Buscamos los posibles cambios dentro de la solucion con la que arrancamos
 
-    possible_changes = create_list_subsolutions(P, D, S, Or, Dest)
+    possible_changes = create_list_subsolutions(P, D, S)
     new_cost, combs, perms = three_opt_permutations(possible_changes, original_cost, travel_costs)
 
     new_s = rearrange_solution(possible_changes, combs, perms)
@@ -143,14 +143,14 @@ def opt_3(P, D, S, Or, Dest, travel_costs):
     return new_cost, new_s
 
 
-def opt_3_2(P, D, S, Or, Dest, travel_costs):
+def opt_3_2(P, D, S, travel_costs):
     
     # Inicilizamos el costo original de la solucion con la que arrancamos
     current_sol = S
     current_cost = calculate_cost(S, travel_costs)
 
     while True:
-        possible_changes = create_list_subsolutions(P, D, current_sol, Or, Dest)
+        possible_changes = create_list_subsolutions(P, D, current_sol)
         new_cost, combs, perms = three_opt_permutations(possible_changes, current_cost, travel_costs)
 
         if new_cost >= current_cost:
