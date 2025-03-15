@@ -18,6 +18,13 @@ def generate_routes_json():
                 routes_json.append(label_test)
     return routes_json
 
+def access_instances_pablo():
+    routes_json = []
+    for filename in os.listdir("../Instances_Pablo"):
+        label_test = "../Instances_Pablo/" + filename
+        routes_json.append(label_test)
+    return routes_json
+
 def calculate_cost(S, travel_costs):
     total = 0
     for i, node in enumerate(S[:-1]): # Evitamos visitar el nodo final

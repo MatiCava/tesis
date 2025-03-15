@@ -12,7 +12,7 @@ def parse_input(input):
     # Extraer nodos
     nodes = [list(map(int, line.split())) for line in lines[2:2 + 2 + 2 * num_orders]]
     
-    final_destination = {"x": nodes[1][0], "y": nodes[1][1], "node_type": "final", "id": num_orders + 1, "item_id": 0}
+    final_destination = {"x": nodes[1][0], "y": nodes[1][1], "node_type": "final", "id": 2 * num_orders + 1, "item_id": 0}
     depot = {"x": nodes[0][0], "y": nodes[0][1], "node_type": "depot", "id": 0, "item_id": 0}
     
     pickups = []
@@ -31,7 +31,7 @@ def parse_input(input):
             "x": nodes[2 + num_orders + i][0],
             "y": nodes[2 + num_orders + i][1],
             "node_type": "delivery",
-            "id": num_orders + 2 + i,
+            "id": num_orders + 1 + i,
             "item_id": i + 1
         }
         pickups.append(pickup)
@@ -40,13 +40,15 @@ def parse_input(input):
     # Crear lista completa de nodos
     all_nodes = [depot] + pickups + deliveries + [final_destination]
 
+    num_nodes = len(all_nodes)
+
     # Inicializar la matriz con ceros
-    travel_costs = [[0] * num_orders for _ in range(num_orders)]
+    travel_costs = [[0] * num_nodes for _ in range(num_nodes)]
     matrix = [[0] * num_orders for _ in range(num_orders)]
 
     # Rellenar la matriz con las distancias euclidianas
-    for i in range(num_orders):
-        for j in range(num_orders):
+    for i in range(num_nodes):
+        for j in range(num_nodes):
             if i != j:
                 travel_costs[i][j] = euclidean_distance(all_nodes[i], all_nodes[j])
 

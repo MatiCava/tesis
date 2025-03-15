@@ -36,7 +36,7 @@ for n in n_values:
             final_destination_coord = (random.randint(0, 1000), random.randint(0, 1000))
 
         # Creamos el nodo final
-        final_destination = {"x": final_destination_coord[0], "y": final_destination_coord[1], "node_type": "final", "id": n + 1, "item_id": 0}
+        final_destination = {"x": final_destination_coord[0], "y": final_destination_coord[1], "node_type": "final", "id": 2*n+1, "item_id": 0}
 
         # El primer punto es el depósito
         depot = {"x": points[0][0], "y": points[0][1], "node_type": "depot", "id": 0, "item_id": 0}
