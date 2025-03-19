@@ -1,6 +1,6 @@
 from utils import calculate_cost
-from swap_local_search import swap_local_search, swap_local_search_2
-from three_opt import opt_3, opt_3_2
+from swap_local_search import swap_local_search
+from three_opt import three_opt
 
 
 def VNS(initial_S, travel_costs, incompatibilities, vns_max_intentos):
@@ -9,9 +9,9 @@ def VNS(initial_S, travel_costs, incompatibilities, vns_max_intentos):
 
     for _ in range(vns_max_intentos):
         # Primera búsqueda local: Swap
-        swap_cost, swap_solution = swap_local_search_2(current_solution, travel_costs, incompatibilities)
+        swap_cost, swap_solution = swap_local_search(current_solution, current_cost, travel_costs, incompatibilities)
 
-        three_cost, three_solution = opt_3_2(swap_solution, travel_costs)
+        three_cost, three_solution = three_opt(swap_solution, swap_cost, travel_costs)
 
         if swap_cost == three_cost:
             return three_cost, three_solution

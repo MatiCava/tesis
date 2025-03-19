@@ -4,7 +4,7 @@ import time
 from swap_local_search import swap_local_search
 from vns import VNS
 from utils import access_instances_pablo, generate_initial_solution, generate_routes_json, generate_table_results, is_feasible_solution
-from three_opt import opt_3
+from three_opt import three_opt
 
 def main():
 
@@ -17,7 +17,7 @@ def main():
         with open(route, "r") as file:
             input = json.load(file)
         initial_S, P, D = generate_initial_solution(input)
-        cost, sol = opt_3(P, D, initial_S, input["depot"], input["final_destination"], input["travel_costs"])
+        cost, sol = three_opt(P, D, initial_S, input["depot"], input["final_destination"], input["travel_costs"])
         end_time = time.time()
         execution_time = end_time - start_time
         total_execution_time += execution_time

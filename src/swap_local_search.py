@@ -80,25 +80,11 @@ def swap(S, initial_cost, travel_costs, incompatibilities):
 
     return solutions
 
-def swap_local_search(S, travel_costs, incompatibilities):
 
-    current_cost = calculate_cost(S, travel_costs)
-    pos_1, pos_2 = 0, 0
-    
-    solutions = swap(S, current_cost, travel_costs, incompatibilities)
-
-    for cost, a, b in solutions:
-        if(cost < current_cost):
-            current_cost = cost
-            pos_1, pos_2 = a, b
-
-    return current_cost, rearrange_solution(S, pos_1, pos_2, incompatibilities)
-
-# Sacar los _2
 # Pasar por parametro el costo y borrar linea 101
-def swap_local_search_2(S, travel_costs, incompatibilities):
+def swap_local_search(S, initial_cost, travel_costs, incompatibilities):
 
-    current_cost = calculate_cost(S, travel_costs)
+    current_cost = initial_cost
     pos_1, pos_2 = 0, 0
     current_sol = S
 
