@@ -54,8 +54,6 @@ def generate_initial_solution(input):
     final_node = input["final_destination"]
 
     S = [Node(id = depot["id"], item_id = depot["item_id"], x = depot["x"], y = depot["y"], node_type = depot["node_type"])]
-    P = []
-    D = []
 
     for i in range(0, len(pickup_nodes)):
         # pickup y delivery nodes son simetricas
@@ -67,14 +65,12 @@ def generate_initial_solution(input):
 
         S.append(node_p)
         S.append(node_d)
-        P.append(node_p)
-        D.append(node_d)
 
     node_f = Node(id = final_node["id"], item_id = final_node["item_id"], x = final_node["x"], y = final_node["y"], node_type = final_node["node_type"])
 
     S.append(node_f)
 
-    return S, P, D
+    return S
 
 def generate_table_results(results, who):
     base_dir = "..\Results"

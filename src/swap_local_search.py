@@ -29,7 +29,7 @@ def swap(S, initial_cost, travel_costs, incompatibilities):
             if(curr_node.node_type == "pickup"):
                 if(incompatibilities[curr_node.item_id - 1][prev_node.item_id - 1] == 1):
                     break
-                elif(prev_node.node_type == "delivery"):
+                else:
                     cost = initial_cost - \
                         travel_costs[S[prev_pos - 1].id][prev_node.id] - travel_costs[S[node_pos - 1].id][curr_node.id] - travel_costs[curr_node.id][S[node_pos + 1].id] + \
                         travel_costs[S[prev_pos - 1].id][curr_node.id] + travel_costs[curr_node.id][prev_node.id] + travel_costs[S[node_pos - 1].id][S[node_pos + 1].id]
@@ -94,6 +94,8 @@ def swap_local_search(S, travel_costs, incompatibilities):
 
     return current_cost, rearrange_solution(S, pos_1, pos_2, incompatibilities)
 
+# Sacar los _2
+# Pasar por parametro el costo y borrar linea 101
 def swap_local_search_2(S, travel_costs, incompatibilities):
 
     current_cost = calculate_cost(S, travel_costs)
