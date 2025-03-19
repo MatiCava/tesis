@@ -150,7 +150,10 @@ def main_4():
             inc = route_inc[0]
         # print("Sol final: ", res_sol)
         print("Costo final: ", res_cost)
-        # print("Es una solucion correcta? ", is_correct_sol)
+
+        if not is_correct_sol:
+            print("---------- SOLUCION INCORRECTA ----------")
+        
         print("Tiempo de ejecucion: ", execution_time)
         print("--------------------")
         results.append({
