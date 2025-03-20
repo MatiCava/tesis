@@ -129,6 +129,8 @@ def main_4():
     results = []
     for route in all_filenames:
 
+        # Esto es solo para ejecutar las primeras instancias
+        # Con el objetivo de comparar con las que conocemos el optimo
         if("prob10" not in route or "a.00.json" not in route):
             continue
 

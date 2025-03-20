@@ -226,6 +226,7 @@ def test_solution():
         ]
     ]
 
+    assert is_feasible_solution(solution, incompatibilities)
+
     assert calculate_cost(solution, travel_costs) == 3585
 
-    assert is_feasible_solution(solution, incompatibilities)
