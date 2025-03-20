@@ -128,13 +128,17 @@ def main_4():
     total_execution_time = 0
     results = []
     for route in all_filenames:
+
+        if("prob10" not in route or "a.00.json" not in route):
+            continue
+
         # instance_name = route.split("/")[3]
         print("Instancia ejecutada: ", route)
         start_time = time.time()
         with open(route, "r") as file:
             input = json.load(file)
         initial_S = generate_initial_solution(input)
-        vns_max_intentos = 100
+        vns_max_intentos = 1000
         res_cost, res_sol = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos)
         is_correct_sol = is_feasible_solution(res_sol, input["incompatibilities"])
         end_time = time.time()

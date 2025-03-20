@@ -17,7 +17,7 @@ def VNS(initial_S, travel_costs, incompatibilities, vns_max_intentos):
             return three_cost, three_solution
         
         # Por transitividad es igual comparar con swap_cost o con current_cost
-        if three_cost < swap_cost:
+        if three_cost < current_cost:
             current_solution = three_solution
             current_cost = three_cost
 
