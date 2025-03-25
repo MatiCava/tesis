@@ -1,6 +1,7 @@
 import json
 import math
 import time
+from backtracking import backtracking
 from swap_local_search import swap_local_search
 from vns import VNS
 from utils import access_instances_pablo, generate_initial_solution, generate_routes_json, generate_table_results, is_feasible_solution
@@ -170,6 +171,31 @@ def main_4():
     # generate_table_results(results, "vns")
     print("Tiempo total de ejecucion: ", total_execution_time)
 
+def main_backtracking():
+    route = '../Instances_Pablo/prob10a.a.00.json'
+    print("Instancia ejecutada: ", route)
+
+    with open(route, "r") as file:
+        input = json.load(file)
+    S = generate_initial_solution(input)
+
+    initial_solution = [S[0], S[-1]]
+    available_nodes = S[1:-1]
 
 
-main_4()
+    start_time = time.time()
+
+    best_sol, best_cost = backtracking(initial_solution, available_nodes, input["travel_costs"], input["incompatibilities"])    
+
+    execution_time = time.time() - start_time
+
+    print("Costo final: ", best_cost)
+    print("")
+    print("Solucion final: ", best_sol)
+    print("")
+    print("Solucion valida: ", is_feasible_solution(best_sol, input["incompatibilities"]))
+    print("")
+    print("Tiempo de ejecucion: ", execution_time)
+    
+
+main_backtracking()
