@@ -133,6 +133,9 @@ def three_opt(S, initial_cost, travel_costs):
     # Inicilizamos el costo original de la solucion con la que arrancamos
     current_sol = S
     current_cost = initial_cost
+    iterations = 0
+    result_iteration = [initial_cost]
+    list_iterations = [0]
 
     while True:
         possible_changes = create_list_subsolutions(current_sol)
@@ -143,5 +146,8 @@ def three_opt(S, initial_cost, travel_costs):
         
         current_cost = new_cost
         current_sol = rearrange_solution(possible_changes, combs, perms)
+        iterations += 1
+        list_iterations.append(iterations)
+        result_iteration.append(current_cost)
 
-    return current_cost, current_sol
+    return current_cost, current_sol, list_iterations, result_iteration

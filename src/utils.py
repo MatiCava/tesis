@@ -1,6 +1,7 @@
 import math
 from node import Node
 import pandas as pd
+import matplotlib.pyplot as plt
 import os
 
 def euclidean_distance(p1, p2):
@@ -76,6 +77,24 @@ def generate_table_results(results, who):
     base_dir = "..\Results"
     os.makedirs(base_dir, exist_ok=True)
     df = pd.DataFrame(results)
-    print(df)
     csv_path = os.path.join(base_dir, "results_" + who +".csv")
     df.to_csv(csv_path, index=False, encoding="utf-8")
+
+def generate_graphic_results(iterations, result_iteration, route, who):
+    print("iterations ", iterations)
+    print("result_iteration ", result_iteration)
+    base_dir = "..\Graphics"
+    instance_folder = route.split("/")[1]
+    file_name = route.split("/")[2].split(".json")[0]
+    output_folder = os.path.join(base_dir, instance_folder, "results_" + who)
+    output_path = os.path.join(output_folder, file_name + ".png")
+    os.makedirs(output_folder, exist_ok=True)
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(iterations, result_iteration, marker="o", linestyle="-", color="b")
+    plt.ylabel("Valor de la solucion")
+    plt.xlabel("Cantidad de iteraciones")
+    plt.title("Progreso de swap local search")
+    plt.grid(True)
+    plt.savefig(output_path, dpi=300)  
+    plt.close()

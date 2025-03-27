@@ -2,30 +2,31 @@ import json
 import math
 import time
 from backtracking import backtracking
+from backtracking_2 import backtracking_2
 from swap_local_search import swap_local_search
 from vns import VNS
-from utils import access_instances_pablo, generate_initial_solution, generate_routes_json, generate_table_results, is_feasible_solution
+from utils import access_instances_pablo, calculate_cost, generate_graphic_results, generate_initial_solution, generate_routes_json, generate_table_results, is_feasible_solution
 from three_opt import three_opt
 
 def main():
-
-    routes_json = generate_routes_json()
+    # routes_json = generate_routes_json()
+    routes_json = access_instances_pablo()
     total_execution_time = 0
-    results = []
     for route in routes_json:
         print(route)
         start_time = time.time()
         with open(route, "r") as file:
             input = json.load(file)
-        initial_S, P, D = generate_initial_solution(input)
-        cost, sol = three_opt(P, D, initial_S, input["depot"], input["final_destination"], input["travel_costs"])
+        initial_S = generate_initial_solution(input)
+        initial_cost = calculate_cost(initial_S, input["travel_costs"])
+        cost, sol, list_iterations, result_iteration = three_opt(initial_S, initial_cost, input["travel_costs"])
         end_time = time.time()
         execution_time = end_time - start_time
         total_execution_time += execution_time
         #is_correct_sol = is_feasible_solution(sol, input["incompatibilities"])
         route_inc = route.split("_")[1].split(".")
-        instance_name = route.split("/")[3]
-        print("Instancia ejecutada: ", instance_name)
+        # instance_name = route.split("/")[3]
+        print("Instancia ejecutada: ", route)
         if len(route_inc) > 2:
             print("%Inc: ", route_inc[1])
             inc = route_inc[1]
@@ -36,33 +37,35 @@ def main():
         #print("Es una solucion correcta? ", is_correct_sol)
         print("Tiempo de ejecucion: ", execution_time)
         print("--------------------")
-        results.append({
-            "Instancia": instance_name,
-            "%Inc": inc,
-            "Costo": cost,
-            "Tiempo": execution_time
-        })
-    generate_table_results(results, "3_opt")
+        generate_graphic_results(list_iterations, result_iteration, route, "3_opt_local_search")
+    #     results.append({
+    #         "Instancia": instance_name,
+    #         "%Inc": inc,
+    #         "Costo": cost,
+    #         "Tiempo": execution_time
+    #     })
+    # generate_table_results(results, "3_opt")
     print("Tiempo total de ejecucion: ", total_execution_time)
 
 
 def main_2():
-    routes_json = generate_routes_json()
+    routes_json = access_instances_pablo()
+    # routes_json = generate_routes_json()
     total_execution_time = 0
-    results = []
     for route in routes_json:
         start_time = time.time()
         with open(route, "r") as file:
             input = json.load(file)
-        initial_S, P, D = generate_initial_solution(input)
-        cost, sol = swap_local_search(initial_S, input["travel_costs"], input["incompatibilities"])
+        initial_S = generate_initial_solution(input)
+        initial_cost = calculate_cost(initial_S, input["travel_costs"])
+        cost, sol, list_iterations, result_iteration = swap_local_search(initial_S, initial_cost, input["travel_costs"], input["incompatibilities"])
         #is_correct_sol = is_feasible_solution(sol, input["incompatibilities"])
         end_time = time.time()
         execution_time = end_time - start_time
         total_execution_time += execution_time
         route_inc = route.split("_")[1].split(".")
-        instance_name = route.split("/")[3]
-        print("Instancia ejecutada: ", instance_name)
+        # instance_name = route.split("/")[3]
+        print("Instancia ejecutada: ", route)
         if len(route_inc) > 2:
             print("%Inc: ", route_inc[1])
             inc = route_inc[1]
@@ -74,13 +77,14 @@ def main_2():
         #print("Es una solucion correcta? ", is_correct_sol)
         print("Tiempo de ejecucion: ", execution_time)
         print("--------------------")
-        results.append({
-            "Instancia": instance_name,
-            "%Inc": inc,
-            "Costo": cost,
-            "Tiempo": execution_time
-        })
-    generate_table_results(results, "swap_local_search")
+        generate_graphic_results(list_iterations, result_iteration, route, "swap_local_search")
+    #     results.append({
+    #         "Instancia": instance_name,
+    #         "%Inc": inc,
+    #         "Costo": cost,
+    #         "Tiempo": execution_time
+    #     })
+    # generate_table_results(results, "swap_local_search")
     print("Tiempo total de ejecucion: ", total_execution_time)
 
 def main_3():
@@ -170,32 +174,53 @@ def main_4():
 
     # generate_table_results(results, "vns")
     print("Tiempo total de ejecucion: ", total_execution_time)
+    
+def main_bt():
+    all_filenames = access_instances_pablo()
+    # route = routes_json[40]
+    for route in all_filenames:
+        # route = all_filenames[0]
+        with open(route, "r") as file:
+            input = json.load(file)
+        if "prob5" in route:
+            print("Instancia ejecutada: ", route)
+            res_sol = backtracking_2(input)
+            print("Sol final: ", res_sol)
+            print("--------------------")
+    # print("Costo final: ", res_cost)
+    #print("Es una solucion correcta? ", is_correct_sol)
 
 def main_backtracking():
-    route = '../Instances_Pablo/prob10a.a.00.json'
-    print("Instancia ejecutada: ", route)
+    all_filenames = access_instances_pablo()
+    for route in all_filenames:
+    # route = '../Instances_Pablo/prob10a.a.00.json'
+    # print("Instancia ejecutada: ", route)
+        if "prob5" in route:
+            with open(route, "r") as file:
+                input = json.load(file)
+            S = generate_initial_solution(input)
 
-    with open(route, "r") as file:
-        input = json.load(file)
-    S = generate_initial_solution(input)
-
-    initial_solution = [S[0], S[-1]]
-    available_nodes = S[1:-1]
+            initial_solution = [S[0], S[-1]]
+            available_nodes = S[1:-1]
 
 
-    start_time = time.time()
+            start_time = time.time()
 
-    best_sol, best_cost = backtracking(initial_solution, available_nodes, input["travel_costs"], input["incompatibilities"])    
+            best_sol, best_cost = backtracking(initial_solution, available_nodes, input["travel_costs"], input["incompatibilities"])    
 
-    execution_time = time.time() - start_time
-
-    print("Costo final: ", best_cost)
-    print("")
-    print("Solucion final: ", best_sol)
-    print("")
-    print("Solucion valida: ", is_feasible_solution(best_sol, input["incompatibilities"]))
-    print("")
-    print("Tiempo de ejecucion: ", execution_time)
+            execution_time = time.time() - start_time
+            print("Instancia ejecutada: ", route)
+            print("Costo final: ", best_cost)
+            print("")
+            print("Solucion final: ", best_sol)
+            print("")
+            print("Solucion valida: ", is_feasible_solution(best_sol, input["incompatibilities"]))
+            print("")
+            print("Tiempo de ejecucion: ", execution_time)
+            print("--------------------")
     
 
-main_backtracking()
+# main_backtracking()
+# main_bt()
+# main_2()
+main()
