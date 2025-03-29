@@ -9,8 +9,8 @@ from utils import access_instances_pablo, calculate_cost, generate_graphic_resul
 from three_opt import three_opt
 
 def main():
-    # routes_json = generate_routes_json()
-    routes_json = access_instances_pablo()
+    routes_json = generate_routes_json()
+    # routes_json = access_instances_pablo()
     total_execution_time = 0
     for route in routes_json:
         print(route)
@@ -35,9 +35,9 @@ def main():
             inc = route_inc[0]
         print("Costo final: ", cost)
         #print("Es una solucion correcta? ", is_correct_sol)
+        generate_graphic_results(list_iterations, result_iteration, route, "3_opt_local_search")
         print("Tiempo de ejecucion: ", execution_time)
         print("--------------------")
-        generate_graphic_results(list_iterations, result_iteration, route, "3_opt_local_search")
     #     results.append({
     #         "Instancia": instance_name,
     #         "%Inc": inc,
@@ -49,10 +49,12 @@ def main():
 
 
 def main_2():
-    routes_json = access_instances_pablo()
-    # routes_json = generate_routes_json()
+    # routes_json = access_instances_pablo()
+    routes_json = generate_routes_json()
     total_execution_time = 0
     for route in routes_json:
+        # list_iterations = []
+        # result_iteration = []
         start_time = time.time()
         with open(route, "r") as file:
             input = json.load(file)
@@ -75,9 +77,9 @@ def main_2():
         #print("Sol final: ", sol)
         print("Costo final: ", cost)
         #print("Es una solucion correcta? ", is_correct_sol)
+        generate_graphic_results(list_iterations, result_iteration, route, "swap_local_search")
         print("Tiempo de ejecucion: ", execution_time)
         print("--------------------")
-        generate_graphic_results(list_iterations, result_iteration, route, "swap_local_search")
     #     results.append({
     #         "Instancia": instance_name,
     #         "%Inc": inc,
@@ -174,21 +176,6 @@ def main_4():
 
     # generate_table_results(results, "vns")
     print("Tiempo total de ejecucion: ", total_execution_time)
-    
-def main_bt():
-    all_filenames = access_instances_pablo()
-    # route = routes_json[40]
-    for route in all_filenames:
-        # route = all_filenames[0]
-        with open(route, "r") as file:
-            input = json.load(file)
-        if "prob5" in route:
-            print("Instancia ejecutada: ", route)
-            res_sol = backtracking_2(input)
-            print("Sol final: ", res_sol)
-            print("--------------------")
-    # print("Costo final: ", res_cost)
-    #print("Es una solucion correcta? ", is_correct_sol)
 
 def main_backtracking():
     all_filenames = access_instances_pablo()

@@ -10,7 +10,7 @@ def euclidean_distance(p1, p2):
 def generate_routes_json():
     instance_labels = ['a', 'b', 'c', 'd', 'e']
     densities = ["0.1", "0.5", "0.25", "0.75", "0"]
-    folders = ["5", "10", "15", "20", "25", "30", "35"]
+    folders = ["5", "10", "15", "20", "25", "30", "35", "50", "75", "100"]
     routes_json = []
     for folder in folders:
         for label in instance_labels:
@@ -81,11 +81,11 @@ def generate_table_results(results, who):
     df.to_csv(csv_path, index=False, encoding="utf-8")
 
 def generate_graphic_results(iterations, result_iteration, route, who):
-    print("iterations ", iterations)
-    print("result_iteration ", result_iteration)
+    print("iterations en utils ", iterations)
+    print("result_iteration en utils ", result_iteration)
     base_dir = "..\Graphics"
     instance_folder = route.split("/")[1]
-    file_name = route.split("/")[2].split(".json")[0]
+    file_name = route.split("/")[2].split(".json")[0] if "Pablo" in instance_folder else route.split("/")[3] + "_" + route.split("/")[4].split(".json")[0]
     output_folder = os.path.join(base_dir, instance_folder, "results_" + who)
     output_path = os.path.join(output_folder, file_name + ".png")
     os.makedirs(output_folder, exist_ok=True)
