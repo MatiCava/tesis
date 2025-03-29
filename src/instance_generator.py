@@ -4,7 +4,7 @@ import os
 from utils import euclidean_distance
 
 # Valores de n
-n_values = [5, 10, 15, 20, 25, 30, 35]
+n_values = [20, 25, 30, 35, 50, 75, 100]
 
 # Letras para identificar instancias
 instance_labels = ['a', 'b', 'c', 'd', 'e']
@@ -60,36 +60,40 @@ for n in n_values:
                     travel_costs[i][j] = euclidean_distance(all_nodes[i], all_nodes[j])
 
 
-        # Generamos las 5 variantes de incompatibilidades
-        for density in densities:
+        for sub_label in instance_labels:
+            # Generamos las 5 variantes de incompatibilidades
+            for density in densities:
 
-            # Inicializar la matriz de incompatibilidades con ceros
-            incompatibility_graph = [[0] * n for _ in range(n)]
+                # Inicializar la matriz de incompatibilidades con ceros
+                incompatibility_graph = [[0] * n for _ in range(n)]
 
-            # Cantidad de incompatibilidades a generar
-            total_possible_edges = (n * (n - 1)) // 2  # Combinaciones posibles entre items
-            num_incompatibilities = round(density * total_possible_edges)  # Proporción de la densidad
+                # Cantidad de incompatibilidades a generar
+                total_possible_edges = (n * (n - 1)) // 2  # Combinaciones posibles entre items
+                num_incompatibilities = round(density * total_possible_edges)  # Proporción de la densidad
 
-            # Generar pares de items incompatibles aleatoriamente
-            possible_pairs = [(i, j) for i in range(n) for j in range(i + 1, n)]
-            selected_pairs = random.sample(possible_pairs, num_incompatibilities)
+                # Generar pares de items incompatibles aleatoriamente
+                possible_pairs = [(i, j) for i in range(n) for j in range(i + 1, n)]
+                selected_pairs = random.sample(possible_pairs, num_incompatibilities)
 
-            for i, j in selected_pairs:
-                incompatibility_graph[i][j] = 1
-                incompatibility_graph[j][i] = 1  # Simetría
+                for i, j in selected_pairs:
+                    incompatibility_graph[i][j] = 1
+                    incompatibility_graph[j][i] = 1  # Simetría
 
-            # Guardar la instancia con incompatibilidades
-            instance_data = {
-                'depot': depot,
-                'final_destination': final_destination,
-                'pickup_nodes': pickups,
-                'delivery_nodes': deliveries,
-                'travel_costs': travel_costs,
-                'incompatibilities': incompatibility_graph
-            }
+                # Guardar la instancia con incompatibilidades
+                instance_data = {
+                    'depot': depot,
+                    'final_destination': final_destination,
+                    'pickup_nodes': pickups,
+                    'delivery_nodes': deliveries,
+                    'travel_costs': travel_costs,
+                    'incompatibilities': incompatibility_graph
+                }
 
-            file_name = os.path.join(instance_dir, f'density_{density}.json')
-            with open(file_name, 'w') as f:
-                json.dump(instance_data, f, indent=4)
+                file_name = os.path.join(instance_dir, sub_label, f'density_{density}.json')
+                
+                os.makedirs(os.path.dirname(file_name), exist_ok=True)
 
-            print(f'Instancia con {density*100}% de incompatibilidades creada: {file_name}')
+                with open(file_name, 'w') as f:
+                    json.dump(instance_data, f, indent=4)
+
+                print(f'Instancia con {density*100}% de incompatibilidades creada: {file_name}')

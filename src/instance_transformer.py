@@ -1,6 +1,7 @@
 import os
 import json
 from utils import euclidean_distance
+import re
 
 def parse_input(input):
 
@@ -87,12 +88,35 @@ def process_folder(input_folder, output_folder):
             transformed_data = parse_input(data)
 
             output_filename = os.path.splitext(filename)[0] + ".json"
-            output_path = os.path.join(output_folder, output_filename)
 
-            with open(output_path, "w", encoding="utf-8") as json_file:
-                json_file.write(transformed_data)
+            match = re.match(r"^(prob\d+[a-zA-Z])\.([a-zA-Z])\.(\d+)\.json$", output_filename)
+
+
+
+            if match:
+                prob_name = match.group(1)  # "prob5e"
+                number = re.search(r"\d+", prob_name).group()  # Extrae el número dentro de "prob5e"
+                letter = match.group(2)  # Último carácter de "prob5e", que es la letra
+                density_value = int(match.group(3)) / 100  # "density_0.7"
+                
+                density_map = {
+                    0.0: 0,
+                    0.2: 0.25,
+                    0.7: 0.75
+                }
+
+                density_value = density_map.get(density_value, density_value)
+
+                density = f"density_{density_value:.2f}".rstrip("0").rstrip(".") + ".json"
+
+                output_path = os.path.join(output_folder, number, prob_name, letter, density)
+
+                os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+                with open(output_path, "w", encoding="utf-8") as json_file:
+                    json_file.write(transformed_data)
             
-input_folder = "../Instances_Pablo_raw"
-output_folder = "../Instances_Pablo"
+input_folder = "../Instances_raw"
+output_folder = "../Instances"
 
 process_folder(input_folder, output_folder)
