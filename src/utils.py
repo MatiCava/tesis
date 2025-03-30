@@ -14,16 +14,11 @@ def generate_routes_json():
     routes_json = []
     for folder in folders:
         for label in instance_labels:
-            for density in densities:
-                label_test = "../Instances/"+ folder + "/prob" + folder + label + "/density_" + density + ".json"
-                routes_json.append(label_test)
-    return routes_json
-
-def access_instances_pablo():
-    routes_json = []
-    for filename in os.listdir("../Instances_Pablo"):
-        label_test = "../Instances_Pablo/" + filename
-        routes_json.append(label_test)
+            for sub_label in instance_labels:
+                for density in densities:
+                    route_label = "../Instances/"+ folder + "/prob" + folder + label + "/" + sub_label + "/density_" + density + ".json"
+                    print(route_label)
+                    routes_json.append(route_label)
     return routes_json
 
 def calculate_cost(S, travel_costs):
@@ -81,20 +76,17 @@ def generate_table_results(results, who):
     df.to_csv(csv_path, index=False, encoding="utf-8")
 
 def generate_graphic_results(iterations, result_iteration, route, who):
-    print("iterations en utils ", iterations)
-    print("result_iteration en utils ", result_iteration)
-    base_dir = "..\Graphics"
-    instance_folder = route.split("/")[1]
-    file_name = route.split("/")[2].split(".json")[0] if "Pablo" in instance_folder else route.split("/")[3] + "_" + route.split("/")[4].split(".json")[0]
-    output_folder = os.path.join(base_dir, instance_folder, "results_" + who)
-    output_path = os.path.join(output_folder, file_name + ".png")
+    # print("iterations en utils ", iterations)
+    # print("result_iteration en utils ", result_iteration)
+    instance_folder = route.split(".json")[0].split("Instances")[1].split("/")
+    file_name = instance_folder[4] + ".png"
+    output_folder = os.path.join("..", "Graphics", "Instances", "results_" + who, instance_folder[1], instance_folder[2], instance_folder[3])
     os.makedirs(output_folder, exist_ok=True)
-
     plt.figure(figsize=(8, 5))
     plt.plot(iterations, result_iteration, marker="o", linestyle="-", color="b")
     plt.ylabel("Valor de la solucion")
     plt.xlabel("Cantidad de iteraciones")
     plt.title("Progreso de swap local search")
     plt.grid(True)
-    plt.savefig(output_path, dpi=300)  
+    plt.savefig(os.path.join(output_folder, file_name), dpi=300)  
     plt.close()

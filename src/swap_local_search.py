@@ -108,12 +108,12 @@ def swap_local_search(S, initial_cost, travel_costs, incompatibilities):
         result_iteration.append(current_cost)
         mejora_total = initial_cost - current_cost
         epsilon_absoluto = mejora_total * epsilon
-        print("result_iteration ", result_iteration)
-        print("ultima mejora ", current_cost)
+        # print("result_iteration ", result_iteration)
+        # print("ultima mejora ", current_cost)
         mejoras = np.abs(np.diff(result_iteration))
-        print("mejoras ", mejoras)
-        print("mejora_total ", mejora_total)
-        print("epsilon_absoluto ", epsilon_absoluto)
-        print(np.all(mejoras[-n:] < epsilon_absoluto))
+        # print("mejoras ", mejoras)
+        # print("mejora_total ", mejora_total)
+        # print("epsilon_absoluto ", epsilon_absoluto)
+        # print(np.all(mejoras[-n:] < epsilon_absoluto))
 
     return current_cost, current_sol, list_iterations, result_iteration

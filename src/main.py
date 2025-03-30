@@ -2,15 +2,13 @@ import json
 import math
 import time
 from backtracking import backtracking
-from backtracking_2 import backtracking_2
 from swap_local_search import swap_local_search
 from vns import VNS
-from utils import access_instances_pablo, calculate_cost, generate_graphic_results, generate_initial_solution, generate_routes_json, generate_table_results, is_feasible_solution
+from utils import calculate_cost, generate_graphic_results, generate_initial_solution, generate_routes_json, generate_table_results, is_feasible_solution
 from three_opt import three_opt
 
 def main():
     routes_json = generate_routes_json()
-    # routes_json = access_instances_pablo()
     total_execution_time = 0
     for route in routes_json:
         print(route)
@@ -28,15 +26,15 @@ def main():
         # instance_name = route.split("/")[3]
         print("Instancia ejecutada: ", route)
         if len(route_inc) > 2:
-            print("%Inc: ", route_inc[1])
+            # print("%Inc: ", route_inc[1])
             inc = route_inc[1]
         else:
-            print("%Inc: ", route_inc[0])
+            # print("%Inc: ", route_inc[0])
             inc = route_inc[0]
-        print("Costo final: ", cost)
+        # print("Costo final: ", cost)
         #print("Es una solucion correcta? ", is_correct_sol)
         generate_graphic_results(list_iterations, result_iteration, route, "3_opt_local_search")
-        print("Tiempo de ejecucion: ", execution_time)
+        # print("Tiempo de ejecucion: ", execution_time)
         print("--------------------")
     #     results.append({
     #         "Instancia": instance_name,
@@ -49,7 +47,6 @@ def main():
 
 
 def main_2():
-    # routes_json = access_instances_pablo()
     routes_json = generate_routes_json()
     total_execution_time = 0
     for route in routes_json:
@@ -69,16 +66,16 @@ def main_2():
         # instance_name = route.split("/")[3]
         print("Instancia ejecutada: ", route)
         if len(route_inc) > 2:
-            print("%Inc: ", route_inc[1])
+            # print("%Inc: ", route_inc[1])
             inc = route_inc[1]
         else:
-            print("%Inc: ", route_inc[0])
+            # print("%Inc: ", route_inc[0])
             inc = route_inc[0]
         #print("Sol final: ", sol)
-        print("Costo final: ", cost)
+        # print("Costo final: ", cost)
         #print("Es una solucion correcta? ", is_correct_sol)
         generate_graphic_results(list_iterations, result_iteration, route, "swap_local_search")
-        print("Tiempo de ejecucion: ", execution_time)
+        # print("Tiempo de ejecucion: ", execution_time)
         print("--------------------")
     #     results.append({
     #         "Instancia": instance_name,
@@ -130,7 +127,7 @@ def main_3():
     print("Tiempo total de ejecucion: ", total_execution_time)
 
 def main_4():
-    all_filenames = access_instances_pablo()
+    all_filenames = generate_routes_json()
     # route = routes_json[40]
     total_execution_time = 0
     results = []
@@ -178,7 +175,7 @@ def main_4():
     print("Tiempo total de ejecucion: ", total_execution_time)
 
 def main_backtracking():
-    all_filenames = access_instances_pablo()
+    all_filenames = generate_routes_json()
     for route in all_filenames:
     # route = '../Instances_Pablo/prob10a.a.00.json'
     # print("Instancia ejecutada: ", route)
@@ -208,6 +205,5 @@ def main_backtracking():
     
 
 # main_backtracking()
-# main_bt()
 # main_2()
 main()
