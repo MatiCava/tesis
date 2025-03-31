@@ -79,21 +79,19 @@ def swap(S, initial_cost, travel_costs, incompatibilities):
 
     return solutions
 
-def swap_local_search(S, initial_cost, travel_costs, incompatibilities):
+def swap_local_search(S, initial_cost, travel_costs, incompatibilities, max_iteraions):
 
     current_cost = initial_cost
     pos_1, pos_2 = 0, 0
     current_sol = S
-    n = 5
-    epsilon = 0.1
     iterations = 0
     result_iteration = [initial_cost]
     list_iterations = [0]
 
-    while True:
+    while max_iteraions > 0:
         update_sol = False
         solutions = swap(current_sol, current_cost, travel_costs, incompatibilities)
-        for cost, a, b in solutions:          
+        for cost, a, b in solutions: 
             if(cost < current_cost):
                 current_cost = cost
                 pos_1, pos_2 = a, b
@@ -106,14 +104,6 @@ def swap_local_search(S, initial_cost, travel_costs, incompatibilities):
         iterations += 1
         list_iterations.append(iterations)
         result_iteration.append(current_cost)
-        mejora_total = initial_cost - current_cost
-        epsilon_absoluto = mejora_total * epsilon
-        # print("result_iteration ", result_iteration)
-        # print("ultima mejora ", current_cost)
-        mejoras = np.abs(np.diff(result_iteration))
-        # print("mejoras ", mejoras)
-        # print("mejora_total ", mejora_total)
-        # print("epsilon_absoluto ", epsilon_absoluto)
-        # print(np.all(mejoras[-n:] < epsilon_absoluto))
+        max_iteraions -= 1
 
     return current_cost, current_sol, list_iterations, result_iteration

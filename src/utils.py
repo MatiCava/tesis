@@ -76,8 +76,6 @@ def generate_table_results(results, who):
     df.to_csv(csv_path, index=False, encoding="utf-8")
 
 def generate_graphic_results(iterations, result_iteration, route, who):
-    # print("iterations en utils ", iterations)
-    # print("result_iteration en utils ", result_iteration)
     instance_folder = route.split(".json")[0].split("Instances")[1].split("/")
     file_name = instance_folder[4] + ".png"
     output_folder = os.path.join("..", "Graphics", "Instances", "results_" + who, instance_folder[1], instance_folder[2], instance_folder[3])
