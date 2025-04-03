@@ -2,6 +2,7 @@ import math
 from node import Node
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import os
 
 def euclidean_distance(p1, p2):
@@ -17,7 +18,6 @@ def generate_routes_json():
             for sub_label in instance_labels:
                 for density in densities:
                     route_label = "../Instances/"+ folder + "/prob" + folder + label + "/" + sub_label + "/density_" + density + ".json"
-                    print(route_label)
                     routes_json.append(route_label)
     return routes_json
 
@@ -85,6 +85,43 @@ def generate_graphic_results(iterations, result_iteration, route, who):
     plt.ylabel("Valor de la solucion")
     plt.xlabel("Cantidad de iteraciones")
     plt.title("Progreso de swap local search")
+    plt.grid(True)
+    plt.savefig(os.path.join(output_folder, file_name), dpi=300)  
+    plt.close()
+
+def generate_vns_combined_graphic_results(all_iterations_swap, all_results_iterations_swap, all_iterations_3_opt, all_results_iterations_3_opt, route):
+    instance_folder = route.split(".json")[0].split("Instances")[1].split("/")
+    file_name = instance_folder[4] + ".png"
+    output_folder = os.path.join("..", "Graphics", "Instances", "results_vns_combined", instance_folder[1], instance_folder[2], instance_folder[3])
+    os.makedirs(output_folder, exist_ok=True)
+    color_map = {"swap": "blue", "3-opt": "red"}
+    aux_iterations = [0]
+    aux_results = []
+    heuristics = []
+    for i in range(len(all_iterations_swap)):
+        iterations_swap = all_iterations_swap[i]
+        results_iterations_swap = all_results_iterations_swap[i]
+        iterations_3_opt = all_iterations_3_opt[i]
+        results_iterations_3_opt = all_results_iterations_3_opt[i]
+        for n in range(aux_iterations[-1] + 1, aux_iterations[-1] + 1 + len(iterations_swap)):
+            aux_iterations.append(n)
+            heuristics.append("swap")
+        for n in range(aux_iterations[-1] + 1, aux_iterations[-1] + 1 + len(iterations_3_opt)):
+            aux_iterations.append(n)
+            heuristics.append("3-opt")
+        aux_results.extend(results_iterations_swap)
+        aux_results.extend(results_iterations_3_opt)
+    
+    for i in range(len(aux_iterations) - 1):
+        plt.plot(aux_iterations[i], aux_results[i], color = color_map[heuristics[i]], marker='o', linestyle='-')
+    plt.ylabel("Valor de la solucion")
+    plt.xlabel("Cantidad de iteraciones")
+    plt.title("Evolucion del VNS con Swap y 3-Opt")
+    legend_elements = [
+        Line2D([0], [0], color='blue', lw=2, label="Swap Local Search"),
+        Line2D([0], [0], color='red', lw=2, label="3-Opt Local Search")
+    ]
+    plt.legend(handles=legend_elements)
     plt.grid(True)
     plt.savefig(os.path.join(output_folder, file_name), dpi=300)  
     plt.close()
