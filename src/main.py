@@ -92,39 +92,39 @@ def main_3():
     # route = routes_json[40]
     total_execution_time = 0
     for route in routes_json:
-        if "prob15a/a/density_0" in route:
-            instance_name = route.split("/")[3]
-            print("Instancia ejecutada: ", route)
-            start_time = time.time()
-            with open(route, "r") as file:
-                input = json.load(file)
-            initial_S = generate_initial_solution(input)
-            vns_max_intentos = 500
-            res_cost, res_sol, iterations_swap, result_swap, iterations_3_opt, result_3_opt = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos)
-            is_correct_sol = is_feasible_solution(res_sol, input["incompatibilities"])
-            end_time = time.time()
-            execution_time = end_time - start_time
-            total_execution_time += execution_time
-            route_inc = route.split("_")[1].split(".")
-            
-            if len(route_inc) > 2:
-                #print("%Inc: ", route_inc[1])
-                inc = route_inc[1]
-            else:
-                #print("%Inc: ", route_inc[0])
-                inc = route_inc[0]
-            print("Sol final: ", res_sol)
-            print("Costo final: ", res_cost)
-            print("Es una solucion correcta? ", is_correct_sol)
-            print("Tiempo de ejecucion: ", execution_time)
-            generate_vns_combined_graphic_results(iterations_swap, result_swap, iterations_3_opt, result_3_opt, route)
-            print("--------------------")
-            # results.append({
-            #     "Instancia": instance_name,
-            #     "%Inc": inc,
-            #     "Costo": res_cost,
-            #     "Tiempo": execution_time
-            # })
+        instance_name = route.split("/")[3]
+        print("Instancia ejecutada: ", route)
+        start_time = time.time()
+        with open(route, "r") as file:
+            input = json.load(file)
+        initial_S = generate_initial_solution(input)
+        vns_max_intentos = 500
+        effort = len(initial_S) / 4
+        res_cost, res_sol, iterations_swap, result_swap, iterations_3_opt, result_3_opt = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos, effort)
+        is_correct_sol = is_feasible_solution(res_sol, input["incompatibilities"])
+        end_time = time.time()
+        execution_time = end_time - start_time
+        total_execution_time += execution_time
+        route_inc = route.split("_")[1].split(".")
+        
+        if len(route_inc) > 2:
+            #print("%Inc: ", route_inc[1])
+            inc = route_inc[1]
+        else:
+            #print("%Inc: ", route_inc[0])
+            inc = route_inc[0]
+        print("Sol final: ", res_sol)
+        print("Costo final: ", res_cost)
+        print("Es una solucion correcta? ", is_correct_sol)
+        print("Tiempo de ejecucion: ", execution_time)
+        generate_vns_combined_graphic_results(iterations_swap, result_swap, iterations_3_opt, result_3_opt, route)
+        print("--------------------")
+        # results.append({
+        #     "Instancia": instance_name,
+        #     "%Inc": inc,
+        #     "Costo": res_cost,
+        #     "Tiempo": execution_time
+        # })
     # generate_table_results(results, "vns")
     print("Tiempo total de ejecucion: ", total_execution_time)
 
@@ -147,7 +147,8 @@ def main_4():
             input = json.load(file)
         initial_S = generate_initial_solution(input)
         vns_max_intentos = 10000
-        res_cost, res_sol = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos)
+        effort = len(initial_S) / 4
+        res_cost, res_sol = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos, effort)
         is_correct_sol = is_feasible_solution(res_sol, input["incompatibilities"])
         end_time = time.time()
         execution_time = end_time - start_time
