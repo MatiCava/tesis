@@ -89,7 +89,7 @@ def generate_graphic_results(iterations, result_iteration, route, who):
     plt.savefig(os.path.join(output_folder, file_name), dpi=300)  
     plt.close()
 
-def generate_vns_combined_graphic_results(all_iterations_swap, all_results_iterations_swap, all_iterations_3_opt, all_results_iterations_3_opt, route):
+def generate_vns_combined_graphic(all_iterations_swap, all_results_iterations_swap, all_iterations_3_opt, all_results_iterations_3_opt, route):
     instance_folder = route.split(".json")[0].split("Instances")[1].split("/")
     file_name = instance_folder[4] + ".png"
     output_folder = os.path.join("..", "Graphics", "Instances", "results_vns_combined", instance_folder[1], instance_folder[2], instance_folder[3])
@@ -122,6 +122,61 @@ def generate_vns_combined_graphic_results(all_iterations_swap, all_results_itera
         Line2D([0], [0], color='red', lw=2, label="3-Opt Local Search")
     ]
     plt.legend(handles=legend_elements)
+    plt.grid(True)
+    plt.savefig(os.path.join(output_folder, file_name), dpi=300)  
+    plt.close()
+
+def generate_vns_combined_graphic_results(results):
+    print(results)
+    partial_route =  list(results.keys())[0]
+    color_map = {"swap": ["#0303ff", "#fca105", "#f5e905", "#bd05f5", "#ab0354"], "3-opt": ["#f51505", "#080100", "#60f702", "#02f7d6", "#05dbfc"]}
+    marker_list = ['o', 's', 'p', 'X', 'D']
+    for j in range(len(results[partial_route]) - 1):
+        result = results[partial_route][j]
+        all_iterations_swap, all_results_iterations_swap, all_iterations_3_opt, all_results_iterations_3_opt, route = result[0], result[1], result[2], result[3], result[4]
+        aux_iterations = [0]
+        aux_results = []
+        heuristics = []
+        for i in range(len(all_iterations_swap)):
+            iterations_swap = all_iterations_swap[i]
+            results_iterations_swap = all_results_iterations_swap[i]
+            iterations_3_opt = all_iterations_3_opt[i]
+            results_iterations_3_opt = all_results_iterations_3_opt[i]
+            for n in range(aux_iterations[-1] + 1, aux_iterations[-1] + 1 + len(iterations_swap)):
+                aux_iterations.append(n)
+                heuristics.append("swap")
+            for n in range(aux_iterations[-1] + 1, aux_iterations[-1] + 1 + len(iterations_3_opt)):
+                aux_iterations.append(n)
+                heuristics.append("3-opt")
+            aux_results.extend(results_iterations_swap)
+            aux_results.extend(results_iterations_3_opt)
+        
+        for i in range(len(aux_iterations) - 1):
+            plt.plot(aux_iterations[i], aux_results[i], color = color_map[heuristics[i]][j], marker=marker_list[j], markersize=4, alpha=0.6, linestyle='-')
+
+    partial_route_split = partial_route.split("/")
+    file_name = "all_densities_" + partial_route_split[1] + "_" + partial_route_split[2] + ".png"
+    output_folder = os.path.join("..", "Graphics", "Instances", "results_vns_combined_compare", partial_route_split[1], partial_route_split[2], partial_route_split[3])
+    print("output_folder ", output_folder)
+    os.makedirs(output_folder, exist_ok=True)
+
+    plt.ylabel("Valor de la solucion")
+    plt.xlabel("Cantidad de iteraciones")
+    plt.title("Evolucion del VNS con Swap y 3-Opt")
+    legend_elements = [
+        Line2D([0], [0], color='#0303ff', lw=1.5, label=""),
+        Line2D([0], [0], color='#fca105', lw=1.5, label=""),
+        Line2D([0], [0], color='#f5e905', lw=1.5, label="Swap Local Search"),
+        Line2D([0], [0], color='#bd05f5', lw=1.5, label=""),
+        Line2D([0], [0], color='#ab0354', lw=1.5, label=""),
+        Line2D([0], [0], color='white', lw=0, label=""),
+        Line2D([0], [0], color='#f51505', lw=1.5, label=""),
+        Line2D([0], [0], color='#080100', lw=1.5, label=""),
+        Line2D([0], [0], color='#60f702', lw=1.5, label="3-Opt Local Search"),
+        Line2D([0], [0], color='#02f7d6', lw=1.5, label=""),
+        Line2D([0], [0], color='#05dbfc', lw=1.5, label="")     
+    ]
+    plt.legend(handles=legend_elements, fontsize=6)
     plt.grid(True)
     plt.savefig(os.path.join(output_folder, file_name), dpi=300)  
     plt.close()

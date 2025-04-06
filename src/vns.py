@@ -12,7 +12,7 @@ def VNS(initial_S, travel_costs, incompatibilities, vns_max_intentos, iterations
     all_results_iterations_swap = []
     all_iterations_3_opt = []
     all_results_iterations_3_opt = []
-    while check_iterations < 3 and vns_max_intentos > 0:
+    while check_iterations < 2 and vns_max_intentos > 0:
         # Primera búsqueda local: Swap
         swap_cost, swap_solution, list_iterations_swap, result_iteration_swap = swap_local_search(current_solution, current_cost, travel_costs, incompatibilities, 0.6 * iterations_per_round)
 
@@ -20,10 +20,10 @@ def VNS(initial_S, travel_costs, incompatibilities, vns_max_intentos, iterations
 
         corridas += 1
         vns_max_intentos -= 1
-        if swap_cost == three_cost:
-            check_iterations += 1
-        else:
+        if swap_cost != three_cost or swap_cost < current_cost: 
             check_iterations = 0
+        else:
+            check_iterations += 1
         all_iterations_swap.append(list_iterations_swap)
         all_results_iterations_swap.append(result_iteration_swap)
         all_iterations_3_opt.append(list_iterations_3_opt)
