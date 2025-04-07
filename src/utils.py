@@ -89,6 +89,58 @@ def generate_graphic_results(iterations, result_iteration, route, who):
     plt.savefig(os.path.join(output_folder, file_name), dpi=300)  
     plt.close()
 
+def generate_graphic_results_compare_percentage(results, who):
+    partial_route =  list(results.keys())[0]
+    color_map = ["#0303ff", "#fca105", "#f51505", "#bd05f5", "#60f702"]
+    marker_list = ['o', 's', 'p', 'X', 'D']
+    for j in range(len(results[partial_route])):
+        result = results[partial_route][j]
+        all_iterations, all_results_iterations, final_cost, initial_cost, route = result[0], result[1], result[2], result[3], result[4]
+        percetage_iterations = []
+        print(" all_results_iterations ", all_results_iterations)
+        print("final_cost ", final_cost)
+        # porcentaje_mejora = [(costo_inicial - c) / (costo_inicial - costo_minimo) * 100 for c in result_iteration]
+        for res_cost in all_results_iterations:
+            percetage_cost = (initial_cost - res_cost) / (initial_cost - final_cost) * 100 if initial_cost != final_cost else 0
+            print("percetage_cost ", (res_cost * 100) / final_cost - 100)
+            percetage_iterations.append(percetage_cost)
+    #     plt.plot(all_iterations, all_results_iterations, color = color_map[j], marker=marker_list[j], markersize=4, alpha=0.6, linestyle='-')          
+
+    # partial_route_split = partial_route.split("/")
+    # file_name = "all_densities_" + partial_route_split[1] + "_" + partial_route_split[2] + ".png"
+    # output_folder = os.path.join("..", "Graphics", "Instances", "results_" + who + "_combined_compare_%_without_limiter", partial_route_split[1], partial_route_split[2], partial_route_split[3])
+    # print("output_folder ", output_folder)
+    # os.makedirs(output_folder, exist_ok=True)
+
+    # plt.ylabel("Valor de la solucion")
+    # plt.xlabel("Cantidad de iteraciones")
+    # plt.title("Evolucion de " + who + "local search")
+    # plt.grid(True)
+    # plt.savefig(os.path.join(output_folder, file_name), dpi=300)  
+    # plt.close()
+
+def generate_graphic_results_compare(results, who):
+    partial_route =  list(results.keys())[0]
+    color_map = ["#0303ff", "#fca105", "#f51505", "#bd05f5", "#60f702"]
+    marker_list = ['o', 's', 'p', 'X', 'D']
+    for j in range(len(results[partial_route])):
+        result = results[partial_route][j]
+        all_iterations, all_results_iterations, final_cost, initial_cost, route = result[0], result[1], result[2], result[3], result[4]
+        plt.plot(all_iterations, all_results_iterations, color = color_map[j], marker=marker_list[j], markersize=4, alpha=0.6, linestyle='-')          
+
+    partial_route_split = partial_route.split("/")
+    file_name = "all_densities_" + partial_route_split[1] + "_" + partial_route_split[2] + ".png"
+    output_folder = os.path.join("..", "Graphics", "Instances", "results_" + who + "_combined_compare_without_limiter", partial_route_split[1], partial_route_split[2], partial_route_split[3])
+    print("output_folder ", output_folder)
+    os.makedirs(output_folder, exist_ok=True)
+
+    plt.ylabel("Valor de la solucion")
+    plt.xlabel("Cantidad de iteraciones")
+    plt.title("Evolucion de " + who + "local search")
+    plt.grid(True)
+    plt.savefig(os.path.join(output_folder, file_name), dpi=300)  
+    plt.close()
+
 def generate_vns_combined_graphic(all_iterations_swap, all_results_iterations_swap, all_iterations_3_opt, all_results_iterations_3_opt, route):
     instance_folder = route.split(".json")[0].split("Instances")[1].split("/")
     file_name = instance_folder[4] + ".png"
@@ -127,11 +179,10 @@ def generate_vns_combined_graphic(all_iterations_swap, all_results_iterations_sw
     plt.close()
 
 def generate_vns_combined_graphic_results(results):
-    print(results)
     partial_route =  list(results.keys())[0]
     color_map = {"swap": ["#0303ff", "#fca105", "#f5e905", "#bd05f5", "#ab0354"], "3-opt": ["#f51505", "#080100", "#60f702", "#02f7d6", "#05dbfc"]}
     marker_list = ['o', 's', 'p', 'X', 'D']
-    for j in range(len(results[partial_route]) - 1):
+    for j in range(len(results[partial_route])):
         result = results[partial_route][j]
         all_iterations_swap, all_results_iterations_swap, all_iterations_3_opt, all_results_iterations_3_opt, route = result[0], result[1], result[2], result[3], result[4]
         aux_iterations = [0]
@@ -156,7 +207,7 @@ def generate_vns_combined_graphic_results(results):
 
     partial_route_split = partial_route.split("/")
     file_name = "all_densities_" + partial_route_split[1] + "_" + partial_route_split[2] + ".png"
-    output_folder = os.path.join("..", "Graphics", "Instances", "results_vns_combined_compare", partial_route_split[1], partial_route_split[2], partial_route_split[3])
+    output_folder = os.path.join("..", "Graphics", "Instances", "results_vns_combined_compare_without_limiter", partial_route_split[1], partial_route_split[2], partial_route_split[3])
     print("output_folder ", output_folder)
     os.makedirs(output_folder, exist_ok=True)
 

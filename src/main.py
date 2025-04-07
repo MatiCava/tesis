@@ -4,20 +4,21 @@ import time
 from backtracking import backtracking
 from swap_local_search import swap_local_search
 from vns import VNS
-from utils import calculate_cost, generate_graphic_results, generate_initial_solution, generate_routes_json, generate_table_results, generate_vns_combined_graphic, generate_vns_combined_graphic_results, is_feasible_solution
+from utils import calculate_cost, generate_graphic_results_compare_percentage, generate_graphic_results, generate_initial_solution, generate_routes_json, generate_graphic_results_compare, generate_table_results, generate_vns_combined_graphic, generate_vns_combined_graphic_results, is_feasible_solution
 from three_opt import three_opt
 
 def main():
     routes_json = generate_routes_json()
     total_execution_time = 0
+    results = {}
     for route in routes_json:
-        print(route)
         start_time = time.time()
         with open(route, "r") as file:
             input = json.load(file)
         initial_S = generate_initial_solution(input)
         initial_cost = calculate_cost(initial_S, input["travel_costs"])
-        cost, sol, list_iterations, result_iteration = three_opt(initial_S, initial_cost, input["travel_costs"])
+        effort = (len(initial_S) / 4)  * 0.4
+        cost, sol, list_iterations, result_iteration = three_opt(initial_S, initial_cost, input["travel_costs"], effort)
         end_time = time.time()
         execution_time = end_time - start_time
         total_execution_time += execution_time
@@ -25,15 +26,23 @@ def main():
         route_inc = route.split("_")[1].split(".")
         # instance_name = route.split("/")[3]
         print("Instancia ejecutada: ", route)
-        if len(route_inc) > 2:
-            # print("%Inc: ", route_inc[1])
-            inc = route_inc[1]
+        partial_route = route.split("Instances")[1].split("/den")[0]
+        if partial_route not in results.keys():
+            if results.keys():
+                generate_graphic_results_compare(results, "3-opt")
+            results = {}
+            results[partial_route] = [[list_iterations, result_iteration, cost, initial_cost, route]]
         else:
-            # print("%Inc: ", route_inc[0])
-            inc = route_inc[0]
+            results[partial_route].append([list_iterations, result_iteration, cost, initial_cost, route])
+        # if len(route_inc) > 2:
+        #     # print("%Inc: ", route_inc[1])
+        #     inc = route_inc[1]
+        # else:
+        #     # print("%Inc: ", route_inc[0])
+        #     inc = route_inc[0]
         # print("Costo final: ", cost)
         #print("Es una solucion correcta? ", is_correct_sol)
-        generate_graphic_results(list_iterations, result_iteration, route, "3_opt_local_search")
+        # generate_graphic_results(list_iterations, result_iteration, route, "3_opt_local_search")
         # print("Tiempo de ejecucion: ", execution_time)
         print("--------------------")
     #     results.append({
@@ -49,42 +58,53 @@ def main():
 def main_2():
     routes_json = generate_routes_json()
     total_execution_time = 0
+    results = {}
     for route in routes_json:
         # list_iterations = []
         # result_iteration = []
-        if "prob100a/a/density_0.25" in route:
-            start_time = time.time()
-            with open(route, "r") as file:
-                input = json.load(file)
-            initial_S = generate_initial_solution(input)
-            initial_cost = calculate_cost(initial_S, input["travel_costs"])
-            cost, sol, list_iterations, result_iteration = swap_local_search(initial_S, initial_cost, input["travel_costs"], input["incompatibilities"])
-            #is_correct_sol = is_feasible_solution(sol, input["incompatibilities"])
-            end_time = time.time()
-            execution_time = end_time - start_time
-            total_execution_time += execution_time
-            route_inc = route.split("_")[1].split(".")
-            # instance_name = route.split("/")[3]
-            print("Instancia ejecutada: ", route)
-            if len(route_inc) > 2:
-                # print("%Inc: ", route_inc[1])
-                inc = route_inc[1]
-            else:
-                # print("%Inc: ", route_inc[0])
-                inc = route_inc[0]
-            #print("Sol final: ", sol)
-            # print("Costo final: ", cost)
-            #print("Es una solucion correcta? ", is_correct_sol)
-            generate_graphic_results(list_iterations, result_iteration, route, "swap_local_search")
-            # print("Tiempo de ejecucion: ", execution_time)
-            print("--------------------")
-        #     results.append({
-        #         "Instancia": instance_name,
-        #         "%Inc": inc,
-        #         "Costo": cost,
-        #         "Tiempo": execution_time
-        #     })
-        # generate_table_results(results, "swap_local_search")
+        start_time = time.time()
+        with open(route, "r") as file:
+            input = json.load(file)
+        initial_S = generate_initial_solution(input)
+        initial_cost = calculate_cost(initial_S, input["travel_costs"])
+        effort = (len(initial_S) / 4)  * 0.6
+        cost, sol, list_iterations, result_iteration = swap_local_search(initial_S, initial_cost, input["travel_costs"], input["incompatibilities"], effort)
+        #is_correct_sol = is_feasible_solution(sol, input["incompatibilities"])
+        end_time = time.time()
+        execution_time = end_time - start_time
+        total_execution_time += execution_time
+        route_inc = route.split("_")[1].split(".")
+        # instance_name = route.split("/")[3]
+        print("Instancia ejecutada: ", route)
+        partial_route = route.split("Instances")[1].split("/den")[0]
+        print("initial_cost ", initial_cost)
+        if partial_route not in results.keys():
+            if results.keys():
+                generate_graphic_results_compare(results, "swap")
+                # generate_graphic_results_compare_percentage(results, "swap")
+            results = {}
+            results[partial_route] = [[list_iterations, result_iteration, cost, initial_cost, route]]
+        else:
+            results[partial_route].append([list_iterations, result_iteration, cost, initial_cost, route])
+        # if len(route_inc) > 2:
+        #     # print("%Inc: ", route_inc[1])
+        #     inc = route_inc[1]
+        # else:
+        #     # print("%Inc: ", route_inc[0])
+        #     inc = route_inc[0]
+        #print("Sol final: ", sol)
+        # print("Costo final: ", cost)
+        #print("Es una solucion correcta? ", is_correct_sol)
+        # generate_graphic_results(list_iterations, result_iteration, route, "swap_local_search")
+        # print("Tiempo de ejecucion: ", execution_time)
+        print("--------------------")
+    #     results.append({
+    #         "Instancia": instance_name,
+    #         "%Inc": inc,
+    #         "Costo": cost,
+    #         "Tiempo": execution_time
+    #     })
+    # generate_table_results(results, "swap_local_search")
     print("Tiempo total de ejecucion: ", total_execution_time)
 
 def main_3():
@@ -108,7 +128,6 @@ def main_3():
         total_execution_time += execution_time
         # route_inc = route.split("_")[1].split(".")
         partial_route = route.split("Instances")[1].split("/den")[0]
-        print("partial_route ", partial_route)
         if partial_route not in results.keys():
             if results.keys():
                 generate_vns_combined_graphic_results(results)
