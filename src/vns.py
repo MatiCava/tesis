@@ -6,7 +6,7 @@ from three_opt import three_opt
 def VNS(initial_S, travel_costs, incompatibilities, vns_max_intentos, iterations_per_round):
     current_solution = initial_S
     current_cost = calculate_cost(current_solution, travel_costs)
-    corridas = 1
+    vns_iterations = 0
     check_iterations = 0
     all_iterations_swap = []
     all_results_iterations_swap = []
@@ -18,7 +18,7 @@ def VNS(initial_S, travel_costs, incompatibilities, vns_max_intentos, iterations
 
         three_cost, three_solution, list_iterations_3_opt, result_iteration_3_opt = three_opt(swap_solution, swap_cost, travel_costs, 0.4 * iterations_per_round)
 
-        corridas += 1
+        vns_iterations += 1
         vns_max_intentos -= 1
         if swap_cost != three_cost or swap_cost < current_cost: 
             check_iterations = 0
@@ -33,4 +33,4 @@ def VNS(initial_S, travel_costs, incompatibilities, vns_max_intentos, iterations
             current_solution = three_solution
             current_cost = three_cost
 
-    return current_cost, current_solution, all_iterations_swap, all_results_iterations_swap, all_iterations_3_opt, all_results_iterations_3_opt
+    return current_cost, current_solution, vns_iterations, all_iterations_swap, all_results_iterations_swap, all_iterations_3_opt, all_results_iterations_3_opt
