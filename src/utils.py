@@ -68,26 +68,48 @@ def generate_initial_solution(input):
 
     return S
 
+def save_result_iterations(list_iterations, result_iteration, route):
+    partial_route = route.split("Instances")[1].split("/den")[0]
+    inc = route.split("_")[1].split(".json")[0]
+    results_csv = []
+    for i in range(len(list_iterations)):
+        results_csv.append({
+                                "Instancia": partial_route,
+                                "%Inc": inc,
+                                "Numero iteracion": list_iterations[i],
+                                "Costo de iteracion": result_iteration[i]
+                            })
+    return results_csv
+
+def save_result_iterations_vns(vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt, route):
+    partial_route = route.split("Instances")[1].split("/den")[0]
+    inc = route.split("_")[1].split(".json")[0]
+    results_csv = []
+    for i in range(vns_iterations):
+        for j in range(len(iterations_swap[i])):
+            results_csv.append({
+                                    "Instancia": partial_route,
+                                    "%Inc": inc,
+                                    "Heuristica": "swap",
+                                    "Numero iteracion": iterations_swap[i][j],
+                                    "Costo de iteracion": result_swap[i][j]
+                                })
+        for j in range(len(iterations_3_opt[i])):
+            results_csv.append({
+                                    "Instancia": partial_route,
+                                    "%Inc": inc,
+                                    "Heuristica": "3-opt",
+                                    "Numero iteracion": iterations_3_opt[i][j],
+                                    "Costo de iteracion": result_3_opt[i][j]
+                                })
+    return results_csv
+
 def generate_table_results(results, who):
     base_dir = "..\Results"
     os.makedirs(base_dir, exist_ok=True)
     df = pd.DataFrame(results)
     csv_path = os.path.join(base_dir, "results_" + who +".csv")
     df.to_csv(csv_path, index=False, encoding="utf-8")
-
-def generate_graphic_results(iterations, result_iteration, route, who):
-    instance_folder = route.split(".json")[0].split("Instances")[1].split("/")
-    file_name = instance_folder[4] + ".png"
-    output_folder = os.path.join("..", "Graphics", "Instances", "results_" + who, instance_folder[1], instance_folder[2], instance_folder[3])
-    os.makedirs(output_folder, exist_ok=True)
-    plt.figure(figsize=(8, 5))
-    plt.plot(iterations, result_iteration, marker="o", linestyle="-", color="b")
-    plt.ylabel("Valor de la solucion")
-    plt.xlabel("Cantidad de iteraciones")
-    plt.title("Progreso de swap local search")
-    plt.grid(True)
-    plt.savefig(os.path.join(output_folder, file_name), dpi=300)  
-    plt.close()
 
 def generate_graphic_results_compare_percentage(results, who):
     partial_route =  list(results.keys())[0]
@@ -111,7 +133,7 @@ def generate_graphic_results_compare_percentage(results, who):
 
     plt.ylabel(f"% sobre la mejor solucion encontrada")
     plt.xlabel("Cantidad de iteraciones")
-    plt.title("Evolucion de " + who + "local search")
+    plt.title("Evolucion de " + who + " local search")
     plt.yticks(range(0, round(percetage_iterations[0]), 10 if percetage_iterations[0] < 200 else 20))
     legend_elements = [
         Line2D([0], [0], color='#0303ff', lw=1.5, label=f"10% incompatibilidad"),
@@ -127,12 +149,13 @@ def generate_graphic_results_compare_percentage(results, who):
 
 def generate_graphic_results_compare(results, who):
     partial_route =  list(results.keys())[0]
-    color_map = ["#0303ff", "#fca105", "#f51505", "#bd05f5", "#60f702"]
+    color_map = {"0.1": "#0303ff", "0.5": "#fca105", "0.25": "#f51505", "0.75": "#bd05f5", "0":"#60f702"}
     marker_list = ['o', 's', 'p', 'X', 'D']
     for j in range(len(results[partial_route])):
         result = results[partial_route][j]
         all_iterations, all_results_iterations, final_cost, initial_cost, route = result[0], result[1], result[2], result[3], result[4]
-        plt.plot(all_iterations, all_results_iterations, color = color_map[j], marker=marker_list[j], markersize=4, alpha=0.6, linestyle='-')          
+        inc = route.split("_")[1].split(".json")[0]
+        plt.plot(all_iterations, all_results_iterations, color = color_map[inc], marker=marker_list[j], markersize=4, alpha=0.6, linestyle='-')          
 
     partial_route_split = partial_route.split("/")
     file_name = "all_densities_" + partial_route_split[1] + "_" + partial_route_split[2] + ".png"
@@ -142,7 +165,15 @@ def generate_graphic_results_compare(results, who):
 
     plt.ylabel("Valor de la solucion")
     plt.xlabel("Cantidad de iteraciones")
-    plt.title("Evolucion de " + who + "local search")
+    plt.title("Evolucion de " + who + " local search")
+    legend_elements = [
+        Line2D([0], [0], color='#0303ff', lw=1.5, label=f"10% incompatibilidad"),
+        Line2D([0], [0], color='#fca105', lw=1.5, label=f"50% incompatibilidad"),
+        Line2D([0], [0], color='#f51505', lw=1.5, label=f"25% incompatibilidad"),
+        Line2D([0], [0], color='#bd05f5', lw=1.5, label=f"75% incompatibilidad"),
+        Line2D([0], [0], color='#60f702', lw=1.5, label=f"0% incompatibilidad")
+    ]
+    plt.legend(handles=legend_elements, fontsize=6)
     plt.grid(True)
     plt.savefig(os.path.join(output_folder, file_name), dpi=300)  
     plt.close()
@@ -186,11 +217,12 @@ def generate_vns_combined_graphic(all_iterations_swap, all_results_iterations_sw
 
 def generate_vns_combined_graphic_results(results):
     partial_route =  list(results.keys())[0]
-    color_map = {"swap": ["#0303ff", "#fca105", "#f5e905", "#bd05f5", "#ab0354"], "3-opt": ["#f51505", "#080100", "#60f702", "#02f7d6", "#05dbfc"]}
+    color_map = {"0.1": "#0303ff", "0.5": "#fca105", "0.25": "#f51505", "0.75": "#bd05f5", "0":"#60f702"}
     marker_list = ['o', 's', 'p', 'X', 'D']
     for j in range(len(results[partial_route])):
         result = results[partial_route][j]
-        all_iterations_swap, all_results_iterations_swap, all_iterations_3_opt, all_results_iterations_3_opt, route = result[0], result[1], result[2], result[3], result[4]
+        all_iterations_swap, all_results_iterations_swap, all_iterations_3_opt, all_results_iterations_3_opt, final_cost, intial_cost, route = result[0], result[1], result[2], result[3], result[4], result[5], result[6]
+        inc = route.split("_")[1].split(".json")[0]
         aux_iterations = [0]
         aux_results = []
         heuristics = []
@@ -209,7 +241,7 @@ def generate_vns_combined_graphic_results(results):
             aux_results.extend(results_iterations_3_opt)
         
         for i in range(len(aux_iterations) - 1):
-            plt.plot(aux_iterations[i], aux_results[i], color = color_map[heuristics[i]][j], marker=marker_list[j], markersize=4, alpha=0.6, linestyle='-')
+            plt.plot(aux_iterations[i], aux_results[i], color = color_map[inc], marker=marker_list[j], markersize=4, alpha=0.6, linestyle='-')
 
     partial_route_split = partial_route.split("/")
     file_name = "all_densities_" + partial_route_split[1] + "_" + partial_route_split[2] + ".png"
@@ -221,17 +253,11 @@ def generate_vns_combined_graphic_results(results):
     plt.xlabel("Cantidad de iteraciones")
     plt.title("Evolucion del VNS con Swap y 3-Opt")
     legend_elements = [
-        Line2D([0], [0], color='#0303ff', lw=1.5, label=""),
-        Line2D([0], [0], color='#fca105', lw=1.5, label=""),
-        Line2D([0], [0], color='#f5e905', lw=1.5, label="Swap Local Search"),
-        Line2D([0], [0], color='#bd05f5', lw=1.5, label=""),
-        Line2D([0], [0], color='#ab0354', lw=1.5, label=""),
-        Line2D([0], [0], color='white', lw=0, label=""),
-        Line2D([0], [0], color='#f51505', lw=1.5, label=""),
-        Line2D([0], [0], color='#080100', lw=1.5, label=""),
-        Line2D([0], [0], color='#60f702', lw=1.5, label="3-Opt Local Search"),
-        Line2D([0], [0], color='#02f7d6', lw=1.5, label=""),
-        Line2D([0], [0], color='#05dbfc', lw=1.5, label="")     
+        Line2D([0], [0], color='#0303ff', lw=1.5, label=f"10% incompatibilidad"),
+        Line2D([0], [0], color='#fca105', lw=1.5, label=f"50% incompatibilidad"),
+        Line2D([0], [0], color='#f51505', lw=1.5, label=f"25% incompatibilidad"),
+        Line2D([0], [0], color='#bd05f5', lw=1.5, label=f"75% incompatibilidad"),
+        Line2D([0], [0], color='#60f702', lw=1.5, label=f"0% incompatibilidad")
     ]
     plt.legend(handles=legend_elements, fontsize=6)
     plt.grid(True)
@@ -240,7 +266,7 @@ def generate_vns_combined_graphic_results(results):
 
 def generate_vns_combined_graphic_results_compare_percentage(results):
     partial_route =  list(results.keys())[0]
-    color_map = {"swap": {"0.1":"#0303ff", "0.5":"#fca105", "0.25":"#f5e905", "0.75":"#bd05f5", "0":"#ab0354"}, "3-opt": {"0.1":"#f51505", "0.5":"#080100", "0.25":"#60f702", "0.75":"#02f7d6", "0":"#05dbfc"}}
+    color_map = {"0.1": "#0303ff", "0.5": "#fca105", "0.25": "#f51505", "0.75": "#bd05f5", "0":"#60f702"}
     marker_list = ['o', 's', 'p', 'X', 'D']
     for j in range(len(results[partial_route])):
         result = results[partial_route][j]
@@ -270,7 +296,7 @@ def generate_vns_combined_graphic_results_compare_percentage(results):
             aux_results.extend(percetage_iterations)
 
         for i in range(len(aux_iterations) - 1):
-            plt.plot(aux_iterations[i], aux_results[i], color = color_map[heuristics[i]][inc], marker=marker_list[j], markersize=4, alpha=0.6, linestyle='-')
+            plt.plot(aux_iterations[i], aux_results[i], color = color_map[inc], marker=marker_list[j], markersize=4, alpha=0.6, linestyle='-')
 
     partial_route_split = partial_route.split("/")
     file_name = "all_densities_" + partial_route_split[1] + "_" + partial_route_split[2] + ".png"
@@ -282,28 +308,11 @@ def generate_vns_combined_graphic_results_compare_percentage(results):
     plt.xlabel("Cantidad de iteraciones")
     plt.title("Evolucion del VNS con Swap y 3-Opt")
     legend_elements = [
-        Line2D([0], [0], color='#0303ff', lw=1.5, label=""),
-        Line2D([0], [0], color='#fca105', lw=1.5, label=""),
-        Line2D([0], [0], color='#f5e905', lw=1.5, label="Swap Local Search"),
-        Line2D([0], [0], color='#bd05f5', lw=1.5, label=""),
-        Line2D([0], [0], color='#ab0354', lw=1.5, label=""),
-        Line2D([0], [0], color='white', lw=0, label=""),
-        Line2D([0], [0], color='#f51505', lw=1.5, label=""),
-        Line2D([0], [0], color='#080100', lw=1.5, label=""),
-        Line2D([0], [0], color='#60f702', lw=1.5, label="3-Opt Local Search"),
-        Line2D([0], [0], color='#02f7d6', lw=1.5, label=""),
-        Line2D([0], [0], color='#05dbfc', lw=1.5, label=""),
-        Line2D([0], [0], color='white', lw=0, label=""),
         Line2D([0], [0], color='#0303ff', lw=1.5, label=f"10% incompatibilidad"),
-        Line2D([0], [0], color='#f51505', lw=1.5, label=f"10% incompatibilidad"),
         Line2D([0], [0], color='#fca105', lw=1.5, label=f"50% incompatibilidad"),
-        Line2D([0], [0], color='#080100', lw=1.5, label=f"50% incompatibilidad"),
-        Line2D([0], [0], color='#f5e905', lw=1.5, label=f"25% incompatibilidad"),
-        Line2D([0], [0], color='#60f702', lw=1.5, label=f"25% incompatibilidad"),
+        Line2D([0], [0], color='#f51505', lw=1.5, label=f"25% incompatibilidad"),
         Line2D([0], [0], color='#bd05f5', lw=1.5, label=f"75% incompatibilidad"),
-        Line2D([0], [0], color='#02f7d6', lw=1.5, label=f"75% incompatibilidad"),
-        Line2D([0], [0], color='#ab0354', lw=1.5, label=f"0% incompatibilidad"),
-        Line2D([0], [0], color='#05dbfc', lw=1.5, label=f"0% incompatibilidad")
+        Line2D([0], [0], color='#60f702', lw=1.5, label=f"0% incompatibilidad")
     ]
     plt.legend(handles=legend_elements, fontsize=6)
     plt.grid(True)

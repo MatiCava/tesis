@@ -4,7 +4,7 @@ import time
 from backtracking import backtracking
 from swap_local_search import swap_local_search
 from vns import VNS
-from utils import calculate_cost, generate_graphic_results_compare_percentage, generate_graphic_results, generate_initial_solution, generate_routes_json, generate_graphic_results_compare, generate_table_results, generate_vns_combined_graphic, generate_vns_combined_graphic_results, generate_vns_combined_graphic_results_compare_percentage, is_feasible_solution
+from utils import calculate_cost, generate_graphic_results_compare_percentage, generate_initial_solution, generate_routes_json, generate_graphic_results_compare, generate_table_results, generate_vns_combined_graphic, generate_vns_combined_graphic_results, generate_vns_combined_graphic_results_compare_percentage, is_feasible_solution, save_result_iterations, save_result_iterations_vns
 from three_opt import three_opt
 
 def main():
@@ -28,9 +28,9 @@ def main():
         print("Instancia ejecutada: ", route)
         partial_route = route.split("Instances")[1].split("/den")[0]
         if partial_route not in results.keys():
-            # if results.keys():
-                # generate_graphic_results_compare(results, "3-opt")
-                # generate_graphic_results_compare_percentage(results, "3-opt")
+            if results.keys():
+                generate_graphic_results_compare(results, "3-opt")
+                generate_graphic_results_compare_percentage(results, "3-opt")
             results = {}
             results[partial_route] = [[list_iterations, result_iteration, cost, initial_cost, route]]
         else:
@@ -41,12 +41,8 @@ def main():
         # generate_graphic_results(list_iterations, result_iteration, route, "3_opt_local_search")
         # print("Tiempo de ejecucion: ", execution_time)
         print("--------------------")
-        results_csv.append({
-            "Instancia": partial_route,
-            "%Inc": inc,
-            "Numero iteraciones": len(list_iterations),
-            "Costo de iteracion": cost
-        })
+        result_csv_all_iterations = save_result_iterations(list_iterations, result_iteration, route)
+        results_csv.extend(result_csv_all_iterations)
     generate_table_results(results_csv, "3_opt")
     print("Tiempo total de ejecucion: ", total_execution_time)
 
@@ -74,7 +70,7 @@ def main_2():
         partial_route = route.split("Instances")[1].split("/den")[0]
         if partial_route not in results.keys():
             if results.keys():
-                # generate_graphic_results_compare(results, "swap")
+                generate_graphic_results_compare(results, "swap")
                 generate_graphic_results_compare_percentage(results, "swap")
             results = {}
             results[partial_route] = [[list_iterations, result_iteration, cost, initial_cost, route]]
@@ -87,12 +83,8 @@ def main_2():
         # generate_graphic_results(list_iterations, result_iteration, route, "swap_local_search")
         # print("Tiempo de ejecucion: ", execution_time)
         print("--------------------")
-        results_csv.append({
-            "Instancia": partial_route,
-            "%Inc": inc,
-            "Numero iteraciones": len(list_iterations),
-            "Costo de iteracion": cost
-        })
+        result_csv_all_iterations = save_result_iterations(list_iterations, result_iteration, route)
+        results_csv.extend(result_csv_all_iterations)
     generate_table_results(results_csv, "swap_local_search")
     print("Tiempo total de ejecucion: ", total_execution_time)
 
@@ -121,7 +113,7 @@ def main_3():
         inc = route.split("_")[1].split(".json")[0]
         if partial_route not in results.keys():
             if results.keys():
-                # generate_vns_combined_graphic_results(results)
+                generate_vns_combined_graphic_results(results)
                 generate_vns_combined_graphic_results_compare_percentage(results)
             results = {}
             results[partial_route] = [[iterations_swap, result_swap, iterations_3_opt, result_3_opt, res_cost, initial_cost, route]]
@@ -140,56 +132,9 @@ def main_3():
             "Numero iteraciones": vns_iterations,
             "Costo de iteracion": res_cost
         })
+        result_csv_all_iterations = save_result_iterations_vns(vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt, route)
+        results_csv.extend(result_csv_all_iterations)
     generate_table_results(results_csv, "vns")
-    print("Tiempo total de ejecucion: ", total_execution_time)
-
-def main_4():
-    all_filenames = generate_routes_json()
-    # route = routes_json[40]
-    total_execution_time = 0
-    results = []
-    for route in all_filenames:
-
-        # Esto es solo para ejecutar las primeras instancias
-        # Con el objetivo de comparar con las que conocemos el optimo
-        if("prob5" not in route or "a.00.json" not in route):
-            continue
-
-        # instance_name = route.split("/")[3]
-        print("Instancia ejecutada: ", route)
-        start_time = time.time()
-        with open(route, "r") as file:
-            input = json.load(file)
-        initial_S = generate_initial_solution(input)
-        vns_max_intentos = 10000
-        effort = len(initial_S) / 4
-        res_cost, res_sol = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos, effort)
-        is_correct_sol = is_feasible_solution(res_sol, input["incompatibilities"])
-        end_time = time.time()
-        execution_time = end_time - start_time
-        total_execution_time += execution_time
-        route_inc = route.split("_")[1].split(".")
-        
-        if len(route_inc) > 2:
-            #print("%Inc: ", route_inc[1])
-            inc = route_inc[1]
-        else:
-            #print("%Inc: ", route_inc[0])
-            inc = route_inc[0]
-        # print("Sol final: ", res_sol)
-        print("Costo final: ", res_cost)
-        print("Tiempo de ejecucion: ", execution_time)
-        print("--------------------")
-        results.append({
-            "Instancia": route,
-            "%Inc": inc,
-            "Costo": res_cost,
-            "Tiempo": execution_time
-        })
-
-        break
-
-    # generate_table_results(results, "vns")
     print("Tiempo total de ejecucion: ", total_execution_time)
 
 def main_backtracking():
