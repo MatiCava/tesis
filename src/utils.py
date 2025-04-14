@@ -318,3 +318,19 @@ def generate_vns_combined_graphic_results_compare_percentage(results):
     plt.grid(True)
     plt.savefig(os.path.join(output_folder, file_name), dpi=300)  
     plt.close()
+
+def max_iteration_swap(size, method="percentile"):
+    if method == "linear":
+        return 0.462 * size - 6.93
+    elif method == "polinomial":
+        return 1
+    elif method == "percentile":
+        return 0.83 * size - 11.24
+    
+def max_iteration_three_opt(size, method="linear"):
+    if method == "linear":
+        return 0.121 * size + -0.85
+    elif method == "polinomial":
+        return 1
+    elif method == "percentile":
+        return 0.13 * size - 0.55

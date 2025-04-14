@@ -51,24 +51,3 @@ def backtracking(current_solution, available_nodes, travel_costs, incompatibilit
         current_solution[-1] = final
     
     return best_sol, best_cost
-
-
-
-    '''
-    #caso base
-    next_nodes vacia
-        devuelvo S
-
-    #caso recursivo
-    para cada nodo en next_nodes:
-        lo agrego a la solucion
-        
-        si es valida la nueva solucion:
-            lo saco de next_nodes
-            llamo a la recursion
-        sino:
-            continue
-    '''
-
-
-

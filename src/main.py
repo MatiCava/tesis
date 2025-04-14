@@ -103,8 +103,7 @@ def main_3():
         initial_S = generate_initial_solution(input)
         initial_cost = calculate_cost(initial_S, input["travel_costs"])
         vns_max_intentos = 500
-        effort = len(initial_S) / 4
-        res_cost, res_sol, vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos, effort)
+        res_cost, res_sol, vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos)
         is_correct_sol = is_feasible_solution(res_sol, input["incompatibilities"])
         end_time = time.time()
         execution_time = end_time - start_time
@@ -166,8 +165,37 @@ def main_backtracking():
             print("Tiempo de ejecucion: ", execution_time)
             print("--------------------")
     
+def main_vns():
+    routes_json = generate_routes_json()
+
+    start_time = time.time()
+
+    for route in routes_json:
+
+        with open(route, "r") as file:
+            input = json.load(file)
+        
+        initial_S = generate_initial_solution(input)
+        
+        print("Instancia ejecutada: ", route)
+
+        vns_max_intentos = 500
+        res_cost, res_sol, vns_interations, swap_iterations, _, three_opt_iterations, _ = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos)
+
+        #is_correct_sol = is_feasible_solution(res_sol, input["incompatibilities"])
+        
+        print("Costo final: ", res_cost)
+        print("--------------------")
+        #print("Solucion valida: ", is_feasible_solution(res_sol, input["incompatibilities"]))
+        #print("Iteraciones de Swap: ", swap_iterations)
+        #print("Iteraciones de 3-opt: ", three_opt_iterations)
+        #print("Iteraciones de VNS: ", vns_interations)
+    execution_time = time.time() - start_time
+
+    print("Tiempo total de ejecucion: ", execution_time)
+
 
 # main_backtracking()
 # main_2()
 # main()
-main_3()
+main_vns()

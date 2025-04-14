@@ -127,7 +127,6 @@ def three_opt_permutations(lst, original_cost, travel_costs):
 
     return best_result, combs, perms
 
-# Que reciba el costo por parametro y eliminar linea 153
 def three_opt(S, initial_cost, travel_costs, max_iteraions):
     
     # Inicilizamos el costo original de la solucion con la que arrancamos
@@ -136,17 +135,18 @@ def three_opt(S, initial_cost, travel_costs, max_iteraions):
     iterations = 0
     result_iteration = [initial_cost]
     list_iterations = [0]
+    update_sol = True
 
-    while True:
-    # while max_iteraions > 0:
+    while max_iteraions > 0 and update_sol:
+        update_sol = False
         possible_changes = create_list_subsolutions(current_sol)
         new_cost, combs, perms = three_opt_permutations(possible_changes, current_cost, travel_costs)
 
-        if new_cost >= current_cost:
-            break
+        if new_cost < current_cost:
+            update_sol = True
+            current_cost = new_cost
+            current_sol = rearrange_solution(possible_changes, combs, perms)
         
-        current_cost = new_cost
-        current_sol = rearrange_solution(possible_changes, combs, perms)
         iterations += 1
         list_iterations.append(iterations)
         result_iteration.append(current_cost)
