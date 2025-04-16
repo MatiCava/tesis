@@ -111,9 +111,9 @@ def main_3():
         partial_route = route.split("Instances")[1].split("/den")[0]
         inc = route.split("_")[1].split(".json")[0]
         if partial_route not in results.keys():
-            if results.keys():
-                generate_vns_combined_graphic_results(results)
-                generate_vns_combined_graphic_results_compare_percentage(results)
+            # if results.keys():
+                # generate_vns_combined_graphic_results(results)
+                # generate_vns_combined_graphic_results_compare_percentage(results)
             results = {}
             results[partial_route] = [[iterations_swap, result_swap, iterations_3_opt, result_3_opt, res_cost, initial_cost, route]]
         else:
@@ -125,12 +125,6 @@ def main_3():
         # print("Tiempo de ejecucion: ", execution_time)
         # generate_vns_combined_graphic(iterations_swap, result_swap, iterations_3_opt, result_3_opt, route)
         print("--------------------")
-        results_csv.append({
-            "Instancia": partial_route,
-            "%Inc": inc,
-            "Numero iteraciones": vns_iterations,
-            "Costo de iteracion": res_cost
-        })
         result_csv_all_iterations = save_result_iterations_vns(vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt, route)
         results_csv.extend(result_csv_all_iterations)
     generate_table_results(results_csv, "vns")
@@ -198,4 +192,5 @@ def main_vns():
 # main_backtracking()
 # main_2()
 # main()
-main_vns()
+main_3()
+# main_vns()
