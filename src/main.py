@@ -4,7 +4,8 @@ import time
 from backtracking import backtracking
 from swap_local_search import swap_local_search
 from vns import VNS
-from utils import calculate_cost, generate_graphic_results_compare_percentage, generate_initial_solution, generate_routes_json, generate_graphic_results_compare, generate_table_results, generate_vns_combined_graphic, generate_vns_combined_graphic_results, generate_vns_combined_graphic_results_compare_percentage, is_feasible_solution, save_result_iterations, save_result_iterations_vns
+from utils import calculate_cost, generate_initial_solution, generate_routes_json, is_feasible_solution, max_iteration_swap
+from plot_utils import generate_graphic_results_compare_percentage, generate_graphic_results_compare, generate_table_results, generate_vns_combined_graphic, generate_vns_combined_graphic_results, generate_vns_combined_graphic_results_compare_percentage, save_result_iterations, save_result_iterations_vns
 from three_opt import three_opt
 
 def main():
@@ -41,7 +42,7 @@ def main():
         # generate_graphic_results(list_iterations, result_iteration, route, "3_opt_local_search")
         # print("Tiempo de ejecucion: ", execution_time)
         print("--------------------")
-        result_csv_all_iterations = save_result_iterations(list_iterations, result_iteration, route)
+        result_csv_all_iterations = save_result_iterations(list_iterations, result_iteration, execution_time, route)
         results_csv.extend(result_csv_all_iterations)
     generate_table_results(results_csv, "3_opt")
     print("Tiempo total de ejecucion: ", total_execution_time)
@@ -60,13 +61,14 @@ def main_2():
             input = json.load(file)
         initial_S = generate_initial_solution(input)
         initial_cost = calculate_cost(initial_S, input["travel_costs"])
-        effort = (len(initial_S) / 4)  * 0.6
-        cost, sol, list_iterations, result_iteration = swap_local_search(initial_S, initial_cost, input["travel_costs"], input["incompatibilities"], effort)
+        solution_size = len(initial_S)
+        cost, sol, list_iterations, result_iteration = swap_local_search(initial_S, initial_cost, input["travel_costs"], input["incompatibilities"], max_iteration_swap(solution_size, method="percentile"))
         #is_correct_sol = is_feasible_solution(sol, input["incompatibilities"])
         end_time = time.time()
         execution_time = end_time - start_time
         total_execution_time += execution_time
         print("Instancia ejecutada: ", route)
+        print('execution_time: ', execution_time)
         partial_route = route.split("Instances")[1].split("/den")[0]
         if partial_route not in results.keys():
             if results.keys():
@@ -83,7 +85,7 @@ def main_2():
         # generate_graphic_results(list_iterations, result_iteration, route, "swap_local_search")
         # print("Tiempo de ejecucion: ", execution_time)
         print("--------------------")
-        result_csv_all_iterations = save_result_iterations(list_iterations, result_iteration, route)
+        result_csv_all_iterations = save_result_iterations(list_iterations, result_iteration, execution_time, route)
         results_csv.extend(result_csv_all_iterations)
     generate_table_results(results_csv, "swap_local_search")
     print("Tiempo total de ejecucion: ", total_execution_time)
@@ -190,7 +192,7 @@ def main_vns():
 
 
 # main_backtracking()
-# main_2()
+main_2()
 # main()
-main_3()
+# main_3()
 # main_vns()

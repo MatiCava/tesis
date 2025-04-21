@@ -4,7 +4,7 @@ import os
 from utils import euclidean_distance
 
 # Valores de n
-n_values = [20, 25, 30, 35, 50, 75, 100]
+n_values = [20, 25, 30, 35, 50, 75, 100, 200, 300, 400, 500]
 
 # Letras para identificar instancias
 instance_labels = ['a', 'b', 'c', 'd', 'e']

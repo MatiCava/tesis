@@ -137,7 +137,8 @@ def three_opt(S, initial_cost, travel_costs, max_iteraions):
     list_iterations = [0]
     update_sol = True
 
-    while max_iteraions > 0 and update_sol:
+    #while max_iteraions > 0 and update_sol:
+    while True and update_sol:
         update_sol = False
         possible_changes = create_list_subsolutions(current_sol)
         new_cost, combs, perms = three_opt_permutations(possible_changes, current_cost, travel_costs)
