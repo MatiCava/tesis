@@ -1,6 +1,7 @@
 
 import json
 import os
+import csv
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
@@ -81,7 +82,7 @@ def save_result_iterations(list_iterations, result_iteration, execution_time, ro
                             })
     return results_csv
 
-def save_result_iterations_vns(vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt, route):
+def save_result_iterations_vns(vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt, execution_time, route):
     partial_route = route.split("Instances")[1].split("/den")[0]
     inc = route.split("_")[1].split(".json")[0]
     results_csv = []
@@ -92,7 +93,8 @@ def save_result_iterations_vns(vns_iterations, iterations_swap, result_swap, ite
                                     "%Inc": inc,
                                     "Heuristica": "swap",
                                     "Numero iteracion": iterations_swap[i][j],
-                                    "Costo de iteracion": result_swap[i][j]
+                                    "Costo de iteracion": result_swap[i][j],
+                                    "Tiempo de iteracion": execution_time
                                 })
         for j in range(len(iterations_3_opt[i])):
             results_csv.append({
@@ -100,16 +102,20 @@ def save_result_iterations_vns(vns_iterations, iterations_swap, result_swap, ite
                                     "%Inc": inc,
                                     "Heuristica": "3-opt",
                                     "Numero iteracion": iterations_3_opt[i][j],
-                                    "Costo de iteracion": result_3_opt[i][j]
+                                    "Costo de iteracion": result_3_opt[i][j],
+                                    "Tiempo de iteracion": execution_time
                                 })
+    with open('../Results/results_vns_without_limiter.csv', 'a', newline='') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerows(results_csv)
     return results_csv
 
 def generate_table_results(results, who):
     base_dir = "..\Results"
     os.makedirs(base_dir, exist_ok=True)
     df = pd.DataFrame(results)
-    #csv_path = os.path.join(base_dir, "results_" + who +"_without_limiter.csv")
-    csv_path = os.path.join(base_dir, "results_" + who+".csv")
+    csv_path = os.path.join(base_dir, "results_" + who +"_without_limiter.csv")
+    #csv_path = os.path.join(base_dir, "results_" + who+".csv")
     df.to_csv(csv_path, index=False, encoding="utf-8")
 
 def generate_graphic_results_compare_percentage(results, who):
@@ -128,8 +134,8 @@ def generate_graphic_results_compare_percentage(results, who):
 
     partial_route_split = partial_route.split("/")
     file_name = "all_densities_" + partial_route_split[1] + "_" + partial_route_split[2] + ".png"
-    output_folder = os.path.join("..", "Graphics", "Instances", "results_" + who + "_combined_compare_%", partial_route_split[1], partial_route_split[2], partial_route_split[3])
-    #output_folder = os.path.join("..", "Graphics", "Instances", "results_" + who + "_combined_compare_%_without_limiter", partial_route_split[1], partial_route_split[2], partial_route_split[3])
+    #output_folder = os.path.join("..", "Graphics", "Instances", "results_" + who + "_combined_compare_%", partial_route_split[1], partial_route_split[2], partial_route_split[3])
+    output_folder = os.path.join("..", "Graphics", "Instances", "results_" + who + "_combined_compare_%_without_limiter", partial_route_split[1], partial_route_split[2], partial_route_split[3])
     print("output_folder ", output_folder)
     os.makedirs(output_folder, exist_ok=True)
 
@@ -161,8 +167,8 @@ def generate_graphic_results_compare(results, who):
 
     partial_route_split = partial_route.split("/")
     file_name = "all_densities_" + partial_route_split[1] + "_" + partial_route_split[2] + ".png"
-    output_folder = os.path.join("..", "Graphics", "Instances", "results_" + who + "_combined_compare", partial_route_split[1], partial_route_split[2], partial_route_split[3])
-    #output_folder = os.path.join("..", "Graphics", "Instances", "results_" + who + "_combined_compare_without_limiter", partial_route_split[1], partial_route_split[2], partial_route_split[3])
+    #output_folder = os.path.join("..", "Graphics", "Instances", "results_" + who + "_combined_compare", partial_route_split[1], partial_route_split[2], partial_route_split[3])
+    output_folder = os.path.join("..", "Graphics", "Instances", "results_" + who + "_combined_compare_without_limiter", partial_route_split[1], partial_route_split[2], partial_route_split[3])
     print("output_folder ", output_folder)
     os.makedirs(output_folder, exist_ok=True)
 
@@ -249,6 +255,7 @@ def generate_vns_combined_graphic_results(results):
     partial_route_split = partial_route.split("/")
     file_name = "all_densities_" + partial_route_split[1] + "_" + partial_route_split[2] + ".png"
     output_folder = os.path.join("..", "Graphics", "Instances", "results_vns_combined_compare_without_limiter", partial_route_split[1], partial_route_split[2], partial_route_split[3])
+    #output_folder = os.path.join("..", "Graphics", "Instances", "results_vns_combined_compare", partial_route_split[1], partial_route_split[2], partial_route_split[3])
     print("output_folder ", output_folder)
     os.makedirs(output_folder, exist_ok=True)
 
@@ -304,6 +311,7 @@ def generate_vns_combined_graphic_results_compare_percentage(results):
     partial_route_split = partial_route.split("/")
     file_name = "all_densities_" + partial_route_split[1] + "_" + partial_route_split[2] + ".png"
     output_folder = os.path.join("..", "Graphics", "Instances", "results_vns_combined_compare_%_without_limiter", partial_route_split[1], partial_route_split[2], partial_route_split[3])
+    #output_folder = os.path.join("..", "Graphics", "Instances", "results_vns_combined_compare_%", partial_route_split[1], partial_route_split[2], partial_route_split[3])
     print("output_folder ", output_folder)
     os.makedirs(output_folder, exist_ok=True)
 

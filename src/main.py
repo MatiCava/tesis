@@ -4,7 +4,7 @@ import time
 from backtracking import backtracking
 from swap_local_search import swap_local_search
 from vns import VNS
-from utils import calculate_cost, generate_initial_solution, generate_routes_json, is_feasible_solution, max_iteration_swap
+from utils import calculate_cost, generate_initial_solution, generate_routes_json, is_feasible_solution, max_iteration_swap, max_iteration_three_opt
 from plot_utils import generate_graphic_results_compare_percentage, generate_graphic_results_compare, generate_table_results, generate_vns_combined_graphic, generate_vns_combined_graphic_results, generate_vns_combined_graphic_results_compare_percentage, save_result_iterations, save_result_iterations_vns
 from three_opt import three_opt
 
@@ -19,8 +19,8 @@ def main():
             input = json.load(file)
         initial_S = generate_initial_solution(input)
         initial_cost = calculate_cost(initial_S, input["travel_costs"])
-        effort = (len(initial_S) / 4)  * 0.4
-        cost, sol, list_iterations, result_iteration = three_opt(initial_S, initial_cost, input["travel_costs"], effort)
+        solution_size = len(initial_S)
+        cost, sol, list_iterations, result_iteration = three_opt(initial_S, initial_cost, input["travel_costs"], max_iteration_three_opt(solution_size, method="linear"))
         end_time = time.time()
         execution_time = end_time - start_time
         total_execution_time += execution_time
@@ -97,39 +97,40 @@ def main_3():
     results = {}
     results_csv = []
     for route in routes_json:
-        instance_name = route.split("/")[3]
-        print("Instancia ejecutada: ", route)
-        start_time = time.time()
-        with open(route, "r") as file:
-            input = json.load(file)
-        initial_S = generate_initial_solution(input)
-        initial_cost = calculate_cost(initial_S, input["travel_costs"])
-        vns_max_intentos = 500
-        res_cost, res_sol, vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos)
-        is_correct_sol = is_feasible_solution(res_sol, input["incompatibilities"])
-        end_time = time.time()
-        execution_time = end_time - start_time
-        total_execution_time += execution_time
-        partial_route = route.split("Instances")[1].split("/den")[0]
-        inc = route.split("_")[1].split(".json")[0]
-        if partial_route not in results.keys():
-            # if results.keys():
-                # generate_vns_combined_graphic_results(results)
-                # generate_vns_combined_graphic_results_compare_percentage(results)
-            results = {}
-            results[partial_route] = [[iterations_swap, result_swap, iterations_3_opt, result_3_opt, res_cost, initial_cost, route]]
-        else:
-            results[partial_route].append([iterations_swap, result_swap, iterations_3_opt, result_3_opt, res_cost, initial_cost, route])
-        
-        # print("Sol final: ", res_sol)
-        print("Costo final: ", res_cost)
-        # print("Es una solucion correcta? ", is_correct_sol)
-        # print("Tiempo de ejecucion: ", execution_time)
-        # generate_vns_combined_graphic(iterations_swap, result_swap, iterations_3_opt, result_3_opt, route)
-        print("--------------------")
-        result_csv_all_iterations = save_result_iterations_vns(vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt, route)
-        results_csv.extend(result_csv_all_iterations)
-    generate_table_results(results_csv, "vns")
+        if '200' or '300' in route:
+            instance_name = route.split("/")[3]
+            print("Instancia ejecutada: ", route)
+            start_time = time.time()
+            with open(route, "r") as file:
+                input = json.load(file)
+            initial_S = generate_initial_solution(input)
+            initial_cost = calculate_cost(initial_S, input["travel_costs"])
+            vns_max_intentos = 500
+            res_cost, res_sol, vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos)
+            is_correct_sol = is_feasible_solution(res_sol, input["incompatibilities"])
+            end_time = time.time()
+            execution_time = end_time - start_time
+            total_execution_time += execution_time
+            partial_route = route.split("Instances")[1].split("/den")[0]
+            inc = route.split("_")[1].split(".json")[0]
+            if partial_route not in results.keys():
+                #if results.keys():
+                    #generate_vns_combined_graphic_results(results)
+                    #generate_vns_combined_graphic_results_compare_percentage(results)
+                results = {}
+                results[partial_route] = [[iterations_swap, result_swap, iterations_3_opt, result_3_opt, res_cost, initial_cost, route]]
+            else:
+                results[partial_route].append([iterations_swap, result_swap, iterations_3_opt, result_3_opt, res_cost, initial_cost, route])
+            
+            # print("Sol final: ", res_sol)
+            print("Costo final: ", res_cost)
+            # print("Es una solucion correcta? ", is_correct_sol)
+            # print("Tiempo de ejecucion: ", execution_time)
+            # generate_vns_combined_graphic(iterations_swap, result_swap, iterations_3_opt, result_3_opt, route)
+            print("--------------------")
+            #result_csv_all_iterations = save_result_iterations_vns(vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt, execution_time, route)
+            #results_csv.extend(result_csv_all_iterations)
+    #generate_table_results(results_csv, "vns")
     print("Tiempo total de ejecucion: ", total_execution_time)
 
 def main_backtracking():
@@ -192,7 +193,7 @@ def main_vns():
 
 
 # main_backtracking()
-main_2()
+# main_2()
 # main()
-# main_3()
+main_3()
 # main_vns()

@@ -90,8 +90,8 @@ def swap_local_search(S, initial_cost, travel_costs, incompatibilities, max_iter
 
     update_sol = True
 
-    #while True and update_sol:        
-    while max_iteraions > 0 and update_sol:
+    while True and update_sol:        
+    #while max_iteraions > 0 and update_sol:
         update_sol = False
         solutions = swap(current_sol, current_cost, travel_costs, incompatibilities)
         for cost, a, b in solutions: 
