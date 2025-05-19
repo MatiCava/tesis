@@ -1,4 +1,5 @@
 import math
+import random
 from node import Node
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -62,6 +63,36 @@ def generate_initial_solution(input):
         S.append(node_p)
         S.append(node_d)
 
+    node_f = Node(id = final_node["id"], item_id = final_node["item_id"], x = final_node["x"], y = final_node["y"], node_type = final_node["node_type"])
+
+    S.append(node_f)
+
+    return S
+
+def generate_initial_solution_random(input):
+    incompatibilities = input["incompatibilities"]
+    depot = input["depot"]
+    all_nodes = input["pickup_nodes"] + input["delivery_nodes"]
+    final_node = input["final_destination"]
+    random.seed(42)
+    random.shuffle(all_nodes)
+    active_items = set()
+
+    S = [Node(id = depot["id"], item_id = depot["item_id"], x = depot["x"], y = depot["y"], node_type = depot["node_type"])]
+
+    while all_nodes:
+        for node in all_nodes[:]:
+            if node["node_type"] == "pickup":
+                if not any(incompatibilities[i - 1][node["item_id"] - 1] == 1 for i in active_items):
+                    active_items.add(node["item_id"])
+                    S.append(Node(id = node["id"], item_id = node["item_id"], x = node["x"], y = node["y"], node_type = node["node_type"]))
+                    all_nodes.remove(node)
+            else:
+                if node["item_id"] in active_items:
+                    active_items.remove(node["item_id"])
+                    S.append(Node(id = node["id"], item_id = node["item_id"], x = node["x"], y = node["y"], node_type = node["node_type"]))
+                    all_nodes.remove(node)
+            
     node_f = Node(id = final_node["id"], item_id = final_node["item_id"], x = final_node["x"], y = final_node["y"], node_type = final_node["node_type"])
 
     S.append(node_f)

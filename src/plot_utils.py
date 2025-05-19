@@ -73,13 +73,17 @@ def save_result_iterations(list_iterations, result_iteration, execution_time, ro
     inc = route.split("_")[1].split(".json")[0]
     results_csv = []
     for i in range(len(list_iterations)):
-        results_csv.append({
-                                "Instancia": partial_route,
-                                "%Inc": inc,
-                                "Numero iteracion": list_iterations[i],
-                                "Costo de iteracion": result_iteration[i],
-                                "Tiempo de iteracion": execution_time
-                            })
+        # results_csv.append({
+        #                         "Instancia": partial_route,
+        #                         "%Inc": inc,
+        #                         "Numero iteracion": list_iterations[i],
+        #                         "Costo de iteracion": result_iteration[i],
+        #                         "Tiempo de iteracion": execution_time
+        #                     })
+        results_csv.append([partial_route, inc, list_iterations[i], result_iteration[i], execution_time])
+    with open('../Results/results_swap_local_search_new_unlimited.csv', 'a', newline='') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerows(results_csv)
     return results_csv
 
 def save_result_iterations_vns(vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt, execution_time, route):
@@ -88,24 +92,26 @@ def save_result_iterations_vns(vns_iterations, iterations_swap, result_swap, ite
     results_csv = []
     for i in range(vns_iterations):
         for j in range(len(iterations_swap[i])):
-            results_csv.append({
-                                    "Instancia": partial_route,
-                                    "%Inc": inc,
-                                    "Heuristica": "swap",
-                                    "Numero iteracion": iterations_swap[i][j],
-                                    "Costo de iteracion": result_swap[i][j],
-                                    "Tiempo de iteracion": execution_time
-                                })
+            # results_csv.append({
+            #                         "Instancia": partial_route,
+            #                         "%Inc": inc,
+            #                         "Heuristica": "swap",
+            #                         "Numero iteracion": iterations_swap[i][j],
+            #                         "Costo de iteracion": result_swap[i][j],
+            #                         "Tiempo de iteracion": execution_time
+            #                     })
+            results_csv.append([partial_route, inc, "swap", iterations_swap[i][j], result_swap[i][j], execution_time])
         for j in range(len(iterations_3_opt[i])):
-            results_csv.append({
-                                    "Instancia": partial_route,
-                                    "%Inc": inc,
-                                    "Heuristica": "3-opt",
-                                    "Numero iteracion": iterations_3_opt[i][j],
-                                    "Costo de iteracion": result_3_opt[i][j],
-                                    "Tiempo de iteracion": execution_time
-                                })
-    with open('../Results/results_vns_without_limiter.csv', 'a', newline='') as csv_file:
+            # results_csv.append({
+            #                         "Instancia": partial_route,
+            #                         "%Inc": inc,
+            #                         "Heuristica": "3-opt",
+            #                         "Numero iteracion": iterations_3_opt[i][j],
+            #                         "Costo de iteracion": result_3_opt[i][j],
+            #                         "Tiempo de iteracion": execution_time
+            #                     })
+            results_csv.append([partial_route, inc, "3-opt", iterations_3_opt[i][j], result_3_opt[i][j], execution_time])
+    with open('../Results/results_vns_new_limited.csv', 'a', newline='') as csv_file:
         writer = csv.writer(csv_file)
         writer.writerows(results_csv)
     return results_csv
