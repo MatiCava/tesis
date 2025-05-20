@@ -29,9 +29,9 @@ def main():
         print("Instancia ejecutada: ", route)
         partial_route = route.split("Instances")[1].split("/den")[0]
         if partial_route not in results.keys():
-            if results.keys():
-                generate_graphic_results_compare(results, "3-opt")
-                generate_graphic_results_compare_percentage(results, "3-opt")
+            # if results.keys():
+            #     generate_graphic_results_compare(results, "3-opt")
+            #     generate_graphic_results_compare_percentage(results, "3-opt")
             results = {}
             results[partial_route] = [[list_iterations, result_iteration, cost, initial_cost, route]]
         else:
@@ -44,7 +44,7 @@ def main():
         print("--------------------")
         result_csv_all_iterations = save_result_iterations(list_iterations, result_iteration, execution_time, route)
         results_csv.extend(result_csv_all_iterations)
-    generate_table_results(results_csv, "3_opt")
+    # generate_table_results(results_csv, "3_opt")
     print("Tiempo total de ejecucion: ", total_execution_time)
 
 
@@ -248,8 +248,8 @@ def generate_initial_random():
     # print("Tiempo total de ejecucion: ", total_execution_time)
 
 # main_backtracking()
-main_2()
-# main()
+# main_2()
+main()
 # main_3()
 # main_vns()
 # generate_initial_random()
