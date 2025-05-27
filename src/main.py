@@ -60,7 +60,7 @@ def main_2():
         initial_S = generate_initial_solution_random(input)
         initial_cost = calculate_cost(initial_S, input["travel_costs"])
         solution_size = len(initial_S)
-        cost, sol, list_iterations, result_iteration = swap_local_search(initial_S, initial_cost, input["travel_costs"], input["incompatibilities"], max_iteration_swap(solution_size, method="percentile"))
+        cost, sol, list_iterations, result_iteration, swap_local_min_check = swap_local_search(initial_S, initial_cost, input["travel_costs"], input["incompatibilities"], max_iteration_swap(solution_size, method="percentile"))
         #is_correct_sol = is_feasible_solution(sol, input["incompatibilities"])
         end_time = time.time()
         execution_time = end_time - start_time
@@ -94,8 +94,8 @@ def main_3():
     results = {}
     results_csv = []
     for route in routes_json:
-        if '400' in route or '500' in route:
-            break
+        # if '400' in route or '500' in route:
+        #     break
             # if '400/prob400a/a' in route or '400/prob400a/b/density_0.1' in route or '400/prob400a/b/density_0.5' in route:
             #     continue
         instance_name = route.split("/")[3]
@@ -103,7 +103,7 @@ def main_3():
         start_time = time.time()
         with open(route, "r") as file:
             input = json.load(file)
-        initial_S = generate_initial_solution(input)
+        initial_S = generate_initial_solution_random(input)
         initial_cost = calculate_cost(initial_S, input["travel_costs"])
         vns_max_intentos = 500
         res_cost, res_sol, vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos)
@@ -207,10 +207,7 @@ def generate_initial_random():
         initial_S_2 = generate_initial_solution_random(input)
         initial_cost = calculate_cost(initial_S, input["travel_costs"])
         is_correct_sol = is_feasible_solution(initial_S, input["incompatibilities"])
-        
-        # print('initial_S ', initial_S)
-        # print('initial_S_2 ', initial_S_2)
-        # print('initial_cost ', initial_cost)
+
         print('is_correct_sol ', is_correct_sol)
         print('initial_S == initial_S_2 ', initial_S == initial_S_2)
         if initial_S != initial_S_2 or not is_correct_sol:
@@ -219,37 +216,10 @@ def generate_initial_random():
             print('initial_S != initial_S_2 ', initial_S != initial_S_2)
             print('is_correct_sol ', is_correct_sol)
             break
-    #     cost, sol, list_iterations, result_iteration = swap_local_search(initial_S, initial_cost, input["travel_costs"], input["incompatibilities"], max_iteration_swap(solution_size, method="percentile"))
-        
-    #     end_time = time.time()
-    #     execution_time = end_time - start_time
-    #     total_execution_time += execution_time
-    #     print("Instancia ejecutada: ", route)
-    #     print('execution_time: ', execution_time)
-    #     partial_route = route.split("Instances")[1].split("/den")[0]
-    #     if partial_route not in results.keys():
-    #         if results.keys():
-    #             generate_graphic_results_compare(results, "swap")
-    #             generate_graphic_results_compare_percentage(results, "swap")
-    #         results = {}
-    #         results[partial_route] = [[list_iterations, result_iteration, cost, initial_cost, route]]
-    #     else:
-    #         results[partial_route].append([list_iterations, result_iteration, cost, initial_cost, route])
-    #     inc = route.split("_")[1].split(".json")[0]
-    #     #print("Sol final: ", sol)
-    #     print("Costo final: ", cost)
-    #     #print("Es una solucion correcta? ", is_correct_sol)
-    #     # generate_graphic_results(list_iterations, result_iteration, route, "swap_local_search")
-    #     # print("Tiempo de ejecucion: ", execution_time)
-    #     print("--------------------")
-    #     result_csv_all_iterations = save_result_iterations(list_iterations, result_iteration, execution_time, route)
-    #     results_csv.extend(result_csv_all_iterations)
-    # generate_table_results(results_csv, "swap_local_search")
-    # print("Tiempo total de ejecucion: ", total_execution_time)
 
 # main_backtracking()
 # main_2()
-main()
-# main_3()
+# main()
+main_3()
 # main_vns()
 # generate_initial_random()
