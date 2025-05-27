@@ -81,7 +81,7 @@ def save_result_iterations(list_iterations, result_iteration, execution_time, ro
         #                         "Tiempo de iteracion": execution_time
         #                     })
         results_csv.append([partial_route, inc, list_iterations[i], result_iteration[i], execution_time])
-    with open('../Results/results_swap_local_search_new_unlimited.csv', 'a', newline='') as csv_file:
+    with open('../Results/results_3_opt_new_limited.csv', 'a', newline='') as csv_file:
         writer = csv.writer(csv_file)
         writer.writerows(results_csv)
     return results_csv
@@ -111,7 +111,7 @@ def save_result_iterations_vns(vns_iterations, iterations_swap, result_swap, ite
             #                         "Tiempo de iteracion": execution_time
             #                     })
             results_csv.append([partial_route, inc, "3-opt", iterations_3_opt[i][j], result_3_opt[i][j], execution_time])
-    with open('../Results/results_vns_new_limited.csv', 'a', newline='') as csv_file:
+    with open('../Results/results_vns_new_unlimited.csv', 'a', newline='') as csv_file:
         writer = csv.writer(csv_file)
         writer.writerows(results_csv)
     return results_csv

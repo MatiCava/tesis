@@ -109,4 +109,4 @@ def swap_local_search(S, initial_cost, travel_costs, incompatibilities, max_iter
             
         max_iteraions -= 1
 
-    return current_cost, current_sol, list_iterations, result_iteration
+    return current_cost, current_sol, list_iterations, result_iteration, not update_sol
