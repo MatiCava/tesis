@@ -1,5 +1,5 @@
 import json
-import math
+import re
 import time
 from backtracking import backtracking
 from swap_local_search import swap_local_search
@@ -173,11 +173,17 @@ def main_vns():
             input = json.load(file)
         
         initial_S = generate_initial_solution(input)
-        
+
+        instance_size = int(re.search(r'/(\d+)/', route).group(1))
+        inc = float(re.search(r'density_([\d.]+)\.json$', route).group(1))
+
+        swap_limit, three_limit = max_iteration_swap(instance_size, inc), 0
+
         print("Instancia ejecutada: ", route)
+        print("Size: ", instance_size, " - Inc: ", inc)
 
         vns_max_intentos = 500
-        res_cost, res_sol, vns_interations, swap_iterations, _, three_opt_iterations, _ = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos)
+        res_cost, res_sol, vns_interations, swap_iterations, _, three_opt_iterations, _ = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos, swap_limit, three_limit)
 
         #is_correct_sol = is_feasible_solution(res_sol, input["incompatibilities"])
         
@@ -187,6 +193,7 @@ def main_vns():
         #print("Iteraciones de Swap: ", swap_iterations)
         #print("Iteraciones de 3-opt: ", three_opt_iterations)
         #print("Iteraciones de VNS: ", vns_interations)
+    
     execution_time = time.time() - start_time
 
     print("Tiempo total de ejecucion: ", execution_time)
@@ -249,7 +256,7 @@ def generate_initial_random():
 
 # main_backtracking()
 # main_2()
-main()
+# main()
 # main_3()
-# main_vns()
+main_vns()
 # generate_initial_random()

@@ -99,13 +99,19 @@ def generate_initial_solution_random(input):
 
     return S
 
-def max_iteration_swap(size, method="percentile"):
-    if method == "linear":
-        return 0.462 * size - 6.93
-    elif method == "polinomial":
-        return 1
-    elif method == "percentile":
-        return 0.83 * size - 11.24
+def max_iteration_swap(size, inc):
+    coeff = {
+        0.0: (0.002838, 2.9980, -19.03),
+        0.1: (0.000431, 1.9421, -1.87),
+        0.25: (0.0000324, 1.4570, 0.2),
+        0.5: (0.0000363, 0.9581, 4.52),
+        0.75: (0.000278, 0.6543, 5.39)
+    }
+    if inc not in coeff:
+        return 0  
+    a, b, c = coeff[inc]
+    iterations = int(round(a * size**2 + b * size + c))
+    return abs(iterations)
     
 def max_iteration_three_opt(size, method="linear"):
     if method == "linear":
