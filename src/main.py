@@ -105,14 +105,16 @@ def main_3():
             input = json.load(file)
         initial_S = generate_initial_solution_random(input)
         initial_cost = calculate_cost(initial_S, input["travel_costs"])
+        instance_size = int(re.search(r'/(\d+)/', route).group(1))
+        inc = float(re.search(r'density_([\d.]+)\.json$', route).group(1))
         vns_max_intentos = 500
-        res_cost, res_sol, vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos)
+        swap_limit, three_limit = max_iteration_swap(instance_size, inc), 0
+        res_cost, res_sol, vns_iterations, iterations_swap, result_swap, iterations_3_opt, result_3_opt = VNS(initial_S, input["travel_costs"], input["incompatibilities"], vns_max_intentos, swap_limit, three_limit)                                                                                               
         is_correct_sol = is_feasible_solution(res_sol, input["incompatibilities"])
         end_time = time.time()
         execution_time = end_time - start_time
         total_execution_time += execution_time
         partial_route = route.split("Instances")[1].split("/den")[0]
-        inc = route.split("_")[1].split(".json")[0]
         if partial_route not in results.keys():
             #if results.keys():
                 #generate_vns_combined_graphic_results(results)
@@ -227,6 +229,6 @@ def generate_initial_random():
 # main_backtracking()
 # main()
 # main_2()
-# main_3()
-main_vns()
+main_3()
+# main_vns()
 # generate_initial_random()
