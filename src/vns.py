@@ -18,7 +18,7 @@ def VNS(initial_S, travel_costs, incompatibilities, vns_max_intentos, swap_limit
         
         swap_cost, swap_solution, list_iterations_swap, result_iteration_swap, swap_local_min_check = swap_local_search(current_solution, current_cost, travel_costs, incompatibilities, swap_limit)
 
-        three_cost, three_solution, list_iterations_3_opt, result_iteration_3_opt = three_opt(swap_solution, swap_cost, travel_costs, max_iteration_three_opt(solution_size, method="linear"))
+        three_cost, three_solution, list_iterations_3_opt, result_iteration_3_opt = three_opt(swap_solution, swap_cost, travel_costs, three_limit)
 
         vns_iterations += 1
         vns_max_intentos -= 1

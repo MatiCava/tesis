@@ -179,7 +179,7 @@ def main_vns():
         instance_size = int(re.search(r'/(\d+)/', route).group(1))
         inc = float(re.search(r'density_([\d.]+)\.json$', route).group(1))
 
-        swap_limit, three_limit = max_iteration_swap(instance_size, inc), 0
+        swap_limit, three_limit = max_iteration_swap(instance_size, inc), max_iteration_three_opt(instance_size, inc)
 
         print("Instancia ejecutada: ", route)
         print("Size: ", instance_size, " - Inc: ", inc)

@@ -113,10 +113,15 @@ def max_iteration_swap(size, inc):
     iterations = int(round(a * size**2 + b * size + c))
     return abs(iterations)
     
-def max_iteration_three_opt(size, method="linear"):
-    if method == "linear":
-        return 0.121 * size + -0.85
-    elif method == "polinomial":
-        return 1
-    elif method == "percentile":
-        return 0.13 * size - 0.55
+def max_iteration_three_opt(size, inc):
+    coeff = {
+        0.1: (0.000007, -0.0054, 0.97),
+        0.25: (0.000019, -0.0136, 2.25),
+        0.5: (0.000017, -0.0153, 3.41),
+        0.75: (-0.000013, -0.0012, 5.54)
+    }
+    if inc not in coeff:
+        return 1  
+    a, b, c = coeff[inc]
+    iterations = int(round(a * size**2 + b * size + c)) + 1
+    return abs(iterations)
